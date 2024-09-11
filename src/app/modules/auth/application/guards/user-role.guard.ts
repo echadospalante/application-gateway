@@ -8,7 +8,7 @@ import {
 import { Reflector } from '@nestjs/core';
 
 import { Observable } from 'rxjs';
-import { User } from 'x-ventures-domain';
+import { AppRole, User } from 'x-ventures-domain';
 
 import { META_ROLES } from '../decorators/role-protected.decorator';
 
@@ -19,11 +19,11 @@ export class UserRoleGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const validRoles: string[] = this.reflector.get(
+    const validRoles: AppRole[] = this.reflector.get(
       META_ROLES,
       context.getHandler(),
     );
-
+    console.log({ validRoles });
     if (!validRoles) return true;
     if (validRoles.length === 0) return true;
 
@@ -33,7 +33,7 @@ export class UserRoleGuard implements CanActivate {
     if (!user) throw new BadRequestException('User not found');
 
     for (const role of user.roles) {
-      if (validRoles.includes(role)) {
+      if (validRoles.includes(role.name)) {
         return true;
       }
     }

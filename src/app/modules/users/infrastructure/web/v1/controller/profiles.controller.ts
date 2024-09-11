@@ -2,7 +2,7 @@ import * as Http from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as Swagger from '@nestjs/swagger';
 
-import { Role, Profile } from 'x-ventures-domain';
+import { Profile, AppRole } from 'x-ventures-domain';
 
 import { HttpService } from '../../../../../../config/http/axios.config';
 import { Auth } from '../../../../../auth/application/decorators';
@@ -25,7 +25,7 @@ export class ProfilesController {
     )}/api/v1/profiles`;
   }
 
-  @Auth(Role.ADMIN)
+  @Auth(AppRole.ADMIN)
   @Http.Get()
   @Http.HttpCode(Http.HttpStatus.OK)
   @Swagger.ApiBearerAuth()

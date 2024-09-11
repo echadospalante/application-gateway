@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as Swagger from '@nestjs/swagger';
 
-import { Role, User } from 'x-ventures-domain';
+import { AppRole, User } from 'x-ventures-domain';
 
 import { HttpService } from '../../../../../../config/http/axios.config';
 import { Auth } from '../../../../../auth/application/decorators';
@@ -13,7 +13,7 @@ import UserUpdateDto from '../model/request/user-update.dto';
 import { profileApiDocs } from '../swagger/users.docs';
 
 const { apiTag, endpoints } = profileApiDocs;
-const path = '';
+const path = 'users';
 
 @Swagger.ApiTags(apiTag)
 @Http.Controller(path)
@@ -29,7 +29,7 @@ export class UsersController {
     )}/api/v1/users`;
   }
 
-  @Auth(Role.ADMIN)
+  @Auth(AppRole.ADMIN)
   @Http.Get()
   @Http.HttpCode(Http.HttpStatus.OK)
   @Swagger.ApiBearerAuth()
@@ -47,7 +47,7 @@ export class UsersController {
     return this.httpAdapter.get<User[]>(`${this.USERS_MANAGEMENT_URL}/basic`);
   }
 
-  @Auth(Role.ADMIN)
+  @Auth(AppRole.ADMIN)
   @Http.Post()
   @Http.HttpCode(Http.HttpStatus.CREATED)
   @UseInterceptors(FileInterceptor('image'))
@@ -67,7 +67,7 @@ export class UsersController {
     return this.httpAdapter.post(`${this.USERS_MANAGEMENT_URL}`, data);
   }
 
-  @Auth(Role.ADMIN)
+  @Auth(AppRole.ADMIN)
   @Http.Put(':id')
   @Http.HttpCode(Http.HttpStatus.ACCEPTED)
   @UseInterceptors(FileInterceptor('image'))
@@ -90,7 +90,7 @@ export class UsersController {
     );
   }
 
-  @Auth(Role.ADMIN)
+  @Auth(AppRole.ADMIN)
   @Http.Patch('enable/:id')
   @Http.HttpCode(Http.HttpStatus.ACCEPTED)
   @Swagger.ApiBearerAuth()
@@ -102,7 +102,7 @@ export class UsersController {
     );
   }
 
-  @Auth(Role.ADMIN)
+  @Auth(AppRole.ADMIN)
   @Http.Patch('disable/:id')
   @Http.HttpCode(Http.HttpStatus.ACCEPTED)
   @Swagger.ApiBearerAuth()
@@ -114,7 +114,7 @@ export class UsersController {
     );
   }
 
-  @Auth(Role.ADMIN)
+  @Auth(AppRole.ADMIN)
   @Http.Delete(':id')
   @Http.HttpCode(Http.HttpStatus.NO_CONTENT)
   @Swagger.ApiBearerAuth()
@@ -123,7 +123,7 @@ export class UsersController {
     return this.httpAdapter.delete(`${this.USERS_MANAGEMENT_URL}/${id}`);
   }
 
-  @Auth(Role.ADMIN)
+  @Auth(AppRole.ADMIN)
   @Http.Put('image/:id')
   @Http.HttpCode(Http.HttpStatus.ACCEPTED)
   @UseInterceptors(FileInterceptor('file'))

@@ -4,12 +4,13 @@ import { ConfigService } from '@nestjs/config';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as Swagger from '@nestjs/swagger';
 
+import { Venture, AppRole } from 'x-ventures-domain';
+
 import { HttpService } from '../../../../../../config/http/axios.config';
 import { Auth } from '../../../../../auth/application/decorators';
 import VentureCreateDto from '../model/request/venture-create.dto';
 import VentureUpdateDto from '../model/request/venture-update.dto';
-import { venturesApiDocs as venturesApiDocs } from '../swagger/ventures.docs';
-import { Role, Venture } from 'x-ventures-domain';
+import { venturesApiDocs } from '../swagger/ventures.docs';
 
 const { apiTag, endpoints } = venturesApiDocs;
 const path = '/ventures';
@@ -28,7 +29,7 @@ export class VenturesController {
     )}/api/v1/ventures`;
   }
 
-  @Auth(Role.ADMIN)
+  @Auth(AppRole.ADMIN)
   @Http.Get()
   @Http.HttpCode(Http.HttpStatus.OK)
   @Swagger.ApiBearerAuth()
@@ -37,7 +38,7 @@ export class VenturesController {
     return this.httpAdapter.get<Venture[]>(`${this.VENTURES_MANAGEMENT_URL}`);
   }
 
-  @Auth(Role.ADMIN)
+  @Auth(AppRole.ADMIN)
   @Http.Post()
   @Http.HttpCode(Http.HttpStatus.CREATED)
   @UseInterceptors(FileInterceptor('image'))
@@ -57,7 +58,7 @@ export class VenturesController {
     return this.httpAdapter.post(`${this.VENTURES_MANAGEMENT_URL}`, data);
   }
 
-  @Auth(Role.ADMIN)
+  @Auth(AppRole.ADMIN)
   @Http.Put(':id')
   @Http.HttpCode(Http.HttpStatus.ACCEPTED)
   @UseInterceptors(FileInterceptor('image'))
@@ -80,7 +81,7 @@ export class VenturesController {
     );
   }
 
-  @Auth(Role.ADMIN)
+  @Auth(AppRole.ADMIN)
   @Http.Patch('enable/:id')
   @Http.HttpCode(Http.HttpStatus.ACCEPTED)
   @Swagger.ApiBearerAuth()
@@ -92,7 +93,7 @@ export class VenturesController {
     );
   }
 
-  @Auth(Role.ADMIN)
+  @Auth(AppRole.ADMIN)
   @Http.Patch('disable/:id')
   @Http.HttpCode(Http.HttpStatus.ACCEPTED)
   @Swagger.ApiBearerAuth()
@@ -104,7 +105,7 @@ export class VenturesController {
     );
   }
 
-  @Auth(Role.ADMIN)
+  @Auth(AppRole.ADMIN)
   @Http.Delete(':id')
   @Http.HttpCode(Http.HttpStatus.NO_CONTENT)
   @Swagger.ApiBearerAuth()
@@ -122,7 +123,7 @@ export class VenturesController {
     return this.httpAdapter.get(`${this.VENTURES_MANAGEMENT_URL}/image/${id}`);
   }
 
-  @Auth(Role.ADMIN)
+  @Auth(AppRole.ADMIN)
   @Http.Put('image/:id')
   @Http.HttpCode(Http.HttpStatus.ACCEPTED)
   @UseInterceptors(FileInterceptor('file'))

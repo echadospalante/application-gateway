@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule } from '@nestjs/swagger';
 
 import * as compression from 'compression';
+import * as cookieParser from 'cookie-parser';
 
 import { AppModule } from './app/app.module';
 import { getSwaggerDocuments } from './app/config/swagger/swagger.config';
@@ -35,6 +36,8 @@ const main = async () => {
 
   // Securing the API
   // app.use(helmet());
+
+  app.use(cookieParser());
 
   setupSwagger(app);
 

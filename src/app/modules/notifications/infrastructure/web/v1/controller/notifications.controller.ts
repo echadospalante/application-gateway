@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as Swagger from '@nestjs/swagger';
 
-import { Role } from 'x-ventures-domain';
+import { AppRole } from 'x-ventures-domain';
 
 import { HttpService } from '../../../../../../config/http/axios.config';
 import { Auth } from '../../../../../auth/application/decorators';
@@ -29,7 +29,7 @@ export class NotificationsController {
     )}/api/v1/notifications`;
   }
 
-  @Auth(Role.ADMIN)
+  @Auth(AppRole.ADMIN)
   @Http.Get()
   @Http.HttpCode(Http.HttpStatus.OK)
   @Swagger.ApiBearerAuth()
@@ -51,7 +51,7 @@ export class NotificationsController {
     );
   }
 
-  @Auth(Role.ADMIN)
+  @Auth(AppRole.ADMIN)
   @Http.Post()
   @Http.HttpCode(Http.HttpStatus.CREATED)
   @UseInterceptors(FileInterceptor('image'))
@@ -74,7 +74,7 @@ export class NotificationsController {
     );
   }
 
-  @Auth(Role.ADMIN)
+  @Auth(AppRole.ADMIN)
   @Http.Put(':id')
   @Http.HttpCode(Http.HttpStatus.ACCEPTED)
   @UseInterceptors(FileInterceptor('image'))
@@ -97,7 +97,7 @@ export class NotificationsController {
     );
   }
 
-  @Auth(Role.ADMIN)
+  @Auth(AppRole.ADMIN)
   @Http.Patch('enable/:id')
   @Http.HttpCode(Http.HttpStatus.ACCEPTED)
   @Swagger.ApiBearerAuth()
@@ -109,7 +109,7 @@ export class NotificationsController {
     );
   }
 
-  @Auth(Role.ADMIN)
+  @Auth(AppRole.ADMIN)
   @Http.Patch('disable/:id')
   @Http.HttpCode(Http.HttpStatus.ACCEPTED)
   @Swagger.ApiBearerAuth()
@@ -121,7 +121,7 @@ export class NotificationsController {
     );
   }
 
-  @Auth(Role.ADMIN)
+  @Auth(AppRole.ADMIN)
   @Http.Delete(':id')
   @Http.HttpCode(Http.HttpStatus.NO_CONTENT)
   @Swagger.ApiBearerAuth()
@@ -143,7 +143,7 @@ export class NotificationsController {
     );
   }
 
-  @Auth(Role.ADMIN)
+  @Auth(AppRole.ADMIN)
   @Http.Put('image/:id')
   @Http.HttpCode(Http.HttpStatus.ACCEPTED)
   @UseInterceptors(FileInterceptor('file'))

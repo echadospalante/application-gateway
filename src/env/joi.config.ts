@@ -10,7 +10,6 @@ export interface EnvironmentSetup {
   APP_WRITE_FILES: string;
   // --------------------------------------------------------------
   // ROUTES
-  AUTH_MANAGEMENT_URL: string;
   DONATIONS_MANAGEMENT_URL: string;
   FEEDS_MANAGEMENT_URL: string;
   NEWS_MANAGEMENT_URL: string;
@@ -19,6 +18,9 @@ export interface EnvironmentSetup {
   VENTURES_MANAGEMENT_URL: string;
   // --------------------------------------------------------------
   METRICS_PORT: string;
+  // --------------------------------------------------------------
+  JWT_TOKEN_SECRET: string;
+  JWT_TOKEN_EXPIRATION: number;
 }
 
 export const JoiValidationSchema = Joi.object<EnvironmentSetup>({
@@ -33,7 +35,6 @@ export const JoiValidationSchema = Joi.object<EnvironmentSetup>({
     .sensitive(true),
   // --------------------------------------------------------------
   // ROUTES
-  AUTH_MANAGEMENT_URL: Joi.string().required(),
   DONATIONS_MANAGEMENT_URL: Joi.string().required(),
   FEEDS_MANAGEMENT_URL: Joi.string().required(),
   NEWS_MANAGEMENT_URL: Joi.string().required(),
@@ -43,4 +44,6 @@ export const JoiValidationSchema = Joi.object<EnvironmentSetup>({
   // --------------------------------------------------------------
   METRICS_PORT: Joi.number().required().min(1).max(65535),
   // --------------------------------------------------------------
+  JWT_TOKEN_SECRET: Joi.string().required(),
+  JWT_TOKEN_EXPIRATION: Joi.number().required().min(1),
 });

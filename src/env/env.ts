@@ -8,7 +8,6 @@ export const environment = () => ({
   APP_WRITE_FILES: process.env.APP_WRITE_FILES,
   // --------------------------------------------------------------
   // ROUTES
-  AUTH_MANAGEMENT_URL: process.env.AUTH_MANAGEMENT_URL,
   DONATIONS_MANAGEMENT_URL: process.env.DONATIONS_MANAGEMENT_URL,
   FEEDS_MANAGEMENT_URL: process.env.FEEDS_MANAGEMENT_URL,
   NEWS_MANAGEMENT_URL: process.env.NEWS_MANAGEMENT_URL,
@@ -18,4 +17,6 @@ export const environment = () => ({
   // --------------------------------------------------------------
   METRICS_PORT: process.env.METRICS_PORT,
   // --------------------------------------------------------------
+  JWT_TOKEN_SECRET: process.env.JWT_TOKEN_SECRET,
+  JWT_TOKEN_EXPIRATION: process.env.JWT_TOKEN_EXPIRATION,
 });
