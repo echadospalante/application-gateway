@@ -43,9 +43,10 @@ export class AuthController {
       lastName: payload.family_name,
     };
     console.log(payload);
-    return this.httpAdapter
-      .post<UserCreate, LoginResponse>(`${this.USERS_MANAGEMENT_URL}`, user)
-      .then((response) => response);
+    return this.httpAdapter.post<UserCreate, LoginResponse>(
+      `${this.USERS_MANAGEMENT_URL}`,
+      user,
+    );
   }
 
   @Auth()

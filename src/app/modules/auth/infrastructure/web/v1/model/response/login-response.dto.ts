@@ -8,4 +8,5 @@ export class LoginResponse {
   id: string;
   roles: AppRole[];
   active: boolean;
+  onboardingCompleted: boolean;
 }
