@@ -79,12 +79,16 @@ export class GoogleTokenInterceptor implements NestInterceptor {
         );
       }),
     ).pipe(
-      switchMap(({ id }) =>
+      switchMap(() =>
         next.handle().pipe(
           tap(() => {
-            const newToken = jwt.sign({ sub: id }, this.JWT_SECRET, {
-              expiresIn: '1d',
-            });
+            const newToken = jwt.sign(
+              { email: request.user.email },
+              this.JWT_SECRET,
+              {
+                expiresIn: '1d',
+              },
+            );
             response.cookie('authentication', newToken, {
               httpOnly: true,
               secure: process.env.NODE_ENV === 'production',

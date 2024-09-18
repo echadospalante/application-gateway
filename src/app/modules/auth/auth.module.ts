@@ -4,16 +4,19 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 
 import { HttpService } from '../../config/http/axios.config';
-import { AuthController } from './infrastructure/web/v1/controller/auth.controller';
-import { GoogleTokenInterceptor } from './application/interceptors/google-token.interceptor';
 import { AuthCookieInterceptor } from './application/interceptors/auth-cookie.interceptor';
+import { GoogleTokenInterceptor } from './application/interceptors/google-token.interceptor';
 import { AuthHttpService } from './domain/gateway/http/http.gateway';
 import { AuthHttpAdapter } from './infrastructure/http/http.service';
+import { AuthController } from './infrastructure/web/v1/controller/auth.controller';
+import { SecurityToolboxImpl } from './infrastructure/security/security.service';
 
 @Module({
   controllers: [AuthController],
   providers: [
     HttpService,
+
+    SecurityToolboxImpl,
     GoogleTokenInterceptor,
     AuthCookieInterceptor,
     {
@@ -23,7 +26,6 @@ import { AuthHttpAdapter } from './infrastructure/http/http.service';
   ],
   imports: [
     ConfigModule,
-
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],

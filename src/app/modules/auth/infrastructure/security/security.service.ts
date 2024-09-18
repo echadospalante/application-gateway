@@ -2,8 +2,9 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 
+import { Request } from 'express';
 import { decode, sign, verify } from 'jsonwebtoken';
-import { ExtractJwt, Strategy } from 'passport-jwt';
+import { Strategy } from 'passport-jwt';
 import { AccessTokenPayload, User } from 'x-ventures-domain';
 
 import { HttpService } from '../../../../config/http/axios.config';
@@ -15,13 +16,21 @@ export class SecurityToolboxImpl extends PassportStrategy(Strategy) {
     private httpService: HttpService,
   ) {
     super({
+      jwtFromRequest: (req: Request) => {
+        if (req && req.cookies) {
+          console.log({ cookies: req.cookies });
+          return req.cookies['authentication'];
+        }
+        return null;
+      },
+      ignoreExpiration: false,
       secretOrKey: configService.getOrThrow('JWT_TOKEN_SECRET'),
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     });
   }
 
   public validateJwt(token: string): boolean {
     try {
+      console.log({ token });
       const jwtSecret: string =
         this.configService.getOrThrow('JWT_TOKEN_SECRET');
       verify(token, jwtSecret);
@@ -32,13 +41,15 @@ export class SecurityToolboxImpl extends PassportStrategy(Strategy) {
   }
 
   public async validate(payload: AccessTokenPayload): Promise<User> {
-    // const { id } = payload;
-    // const user = await this.userRepository.findOneByCriteria({ _id: id });
-    // if (!user) throw new UnauthorizedException('Token not active');
-    // if (!user.active)
-    //   throw new UnauthorizedException('User is inactive, contact an admin');
-    // return user;
-    throw new UnauthorizedException('Not implemented');
+    const { email } = payload;
+    const user = await this.httpService.get<User>(
+      `${this.configService.getOrThrow('USERS_MANAGEMENT_URL')}/api/v1/users/${email}`,
+    );
+    if (!user) throw new UnauthorizedException('Token not active');
+    if (!user.active)
+      throw new UnauthorizedException('User is inactive, contact an admin');
+    return user;
+    // throw new UnauthorizedException('Not implemented');
   }
 
   public generateJwt(

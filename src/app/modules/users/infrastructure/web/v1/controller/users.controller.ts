@@ -34,8 +34,14 @@ export class UsersController {
   @Http.HttpCode(Http.HttpStatus.OK)
   @Swagger.ApiBearerAuth()
   @Swagger.ApiOperation(endpoints.getAllUsers)
-  public getAllUsers(): Promise<User[]> {
-    return this.httpAdapter.get<User[]>(`${this.USERS_MANAGEMENT_URL}`);
+  public getAllUsers(
+    @Http.Query('page') page: number,
+    @Http.Query('size') size: number,
+  ): Promise<User[]> {
+    const skip = page * size;
+    return this.httpAdapter.get<User[]>(
+      `${this.USERS_MANAGEMENT_URL}?includeNotifications=false&includeRoles=true&includeVentures=false&includePreferences=false&includeComments=false&skip=${skip}&take=${size}`,
+    );
   }
 
   @Auth()
@@ -91,7 +97,7 @@ export class UsersController {
   }
 
   @Auth(AppRole.ADMIN)
-  @Http.Patch('enable/:id')
+  @Http.Patch('/unlock/:id')
   @Http.HttpCode(Http.HttpStatus.ACCEPTED)
   @Swagger.ApiBearerAuth()
   @Swagger.ApiOperation(endpoints.enableUser)
@@ -103,7 +109,7 @@ export class UsersController {
   }
 
   @Auth(AppRole.ADMIN)
-  @Http.Patch('disable/:id')
+  @Http.Patch('/lock/:id')
   @Http.HttpCode(Http.HttpStatus.ACCEPTED)
   @Swagger.ApiBearerAuth()
   @Swagger.ApiOperation(endpoints.disableUser)

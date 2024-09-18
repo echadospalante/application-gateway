@@ -23,7 +23,10 @@ const main = async () => {
 
   // CORS
   app.enableCors({
-    origin: 'http://localhost:5173',
+    origin: [
+      'http://localhost:5173',
+      'https://t9sn292b-5173.use2.devtunnels.ms',
+    ],
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
     credentials: true,
   });

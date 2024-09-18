@@ -21,14 +21,12 @@ export class AuthCookieInterceptor implements NestInterceptor {
   ): Promise<Observable<any>> {
     const request = context.switchToHttp().getRequest();
     const response = context.switchToHttp().getResponse();
-
     // Ensure that the request is over HTTPS in production
     if (process.env.NODE_ENV === 'production' && !request.secure) {
       throw new UnauthorizedException('Request must be over HTTPS');
     }
 
     const cookie = request.cookies['authentication'];
-    console.log({ cookie });
     if (!cookie) {
       throw new UnauthorizedException('Access token is missing');
     }
@@ -46,7 +44,7 @@ export class AuthCookieInterceptor implements NestInterceptor {
       return next.handle().pipe(
         tap(() => {
           const newToken = jwt.sign(payload, secret, {
-            expiresIn: '1d',
+            // expiresIn: '1d',
           });
           response.cookie('authentication', newToken, {
             httpOnly: true,
