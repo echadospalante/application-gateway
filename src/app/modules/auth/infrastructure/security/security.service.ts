@@ -18,7 +18,6 @@ export class SecurityToolboxImpl extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: (req: Request) => {
         if (req && req.cookies) {
-          console.log({ cookies: req.cookies });
           return req.cookies['authentication'];
         }
         return null;
