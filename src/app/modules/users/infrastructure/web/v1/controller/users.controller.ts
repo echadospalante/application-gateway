@@ -4,16 +4,18 @@ import { ConfigService } from '@nestjs/config';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as Swagger from '@nestjs/swagger';
 
-import { AppRole, User } from 'x-ventures-domain';
+import { AppRole, Role, User } from 'x-ventures-domain';
 
+import { AuthCookieInterceptor } from 'src/app/modules/auth/application/interceptors/auth-cookie.interceptor';
+import UserRolesUpdateDto from 'src/app/modules/auth/infrastructure/web/v1/model/request/user-roles-update.dto';
 import { HttpService } from '../../../../../../config/http/axios.config';
-import { Auth } from '../../../../../auth/application/decorators';
+import { Auth, GetUser } from '../../../../../auth/application/decorators';
 import UserCreateDto from '../model/request/user-create.dto';
 import UserUpdateDto from '../model/request/user-update.dto';
-import { profileApiDocs } from '../swagger/users.docs';
+import { userApiDocs } from '../swagger/users.docs';
 
-const { apiTag, endpoints } = profileApiDocs;
-const path = 'users';
+const { apiTag, endpoints } = userApiDocs;
+const path = '/users';
 
 @Swagger.ApiTags(apiTag)
 @Http.Controller(path)
@@ -69,7 +71,6 @@ export class UsersController {
       image: image.buffer.toString('base64'),
       mimeType: image.mimetype,
     };
-    console.log({ data });
     return this.httpAdapter.post(`${this.USERS_MANAGEMENT_URL}`, data);
   }
 
@@ -146,6 +147,30 @@ export class UsersController {
     return this.httpAdapter.put(
       `${this.USERS_MANAGEMENT_URL}/image/${ventureId}`,
       formData,
+    );
+  }
+
+  @Auth(AppRole.ADMIN)
+  @Http.Get('/roles')
+  @Http.HttpCode(Http.HttpStatus.OK)
+  @Swagger.ApiBearerAuth()
+  @Swagger.ApiOperation(endpoints.fetchUserRoles)
+  @Http.UseInterceptors(AuthCookieInterceptor)
+  public fetchUserRoles() {
+    return this.httpAdapter.get<Role[]>(`${this.USERS_MANAGEMENT_URL}/roles`);
+  }
+
+  @Auth(AppRole.ADMIN)
+  @Http.Patch('/roles')
+  @Http.HttpCode(Http.HttpStatus.ACCEPTED)
+  @Swagger.ApiBearerAuth()
+  @Swagger.ApiOperation(endpoints.changeUserRoles)
+  @Http.UseInterceptors(AuthCookieInterceptor)
+  public changeUserRoles(@Http.Body() userRolesUpdateDto: UserRolesUpdateDto) {
+    console.log({ userRolesUpdateDto });
+    return this.httpAdapter.put<UserRolesUpdateDto, void>(
+      `${this.USERS_MANAGEMENT_URL}/roles`,
+      { ...userRolesUpdateDto },
     );
   }
 }

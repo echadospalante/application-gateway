@@ -39,14 +39,16 @@ export class AuthController {
     const payload = request.user as IdTokenPayload;
     const user = {
       email: payload.email,
-      picture: payload.picture || 'https://cdn-icons-png.flaticon.com/512/3607/3607444.png',
+      picture:
+        payload.picture ||
+        'https://cdn-icons-png.flaticon.com/512/3607/3607444.png',
       firstName: payload.given_name,
       lastName: payload.family_name,
     };
     return this.httpAdapter.post<UserCreate, LoginResponse>(
       `${this.USERS_MANAGEMENT_URL}`,
       user,
-    )
+    );
   }
 
   @Auth()
@@ -84,11 +86,12 @@ export class AuthController {
     @Http.Body() registerInfo: UserRegisterCreateDto,
   ) {
     console.log({ user, registerInfo });
-    return this.httpAdapter.post(
-      `${this.USERS_MANAGEMENT_URL}/register/${user.email}`,
-      { ...registerInfo },
-    ).catch((error) => {
-      console.error(error)
-    });
+    return this.httpAdapter
+      .post(`${this.USERS_MANAGEMENT_URL}/register/${user.email}`, {
+        ...registerInfo,
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }
 }

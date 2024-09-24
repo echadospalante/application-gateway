@@ -6,9 +6,9 @@ import { Profile, AppRole } from 'x-ventures-domain';
 
 import { HttpService } from '../../../../../../config/http/axios.config';
 import { Auth } from '../../../../../auth/application/decorators';
-import { profileApiDocs } from '../swagger/users.docs';
+import { userApiDocs } from '../swagger/users.docs';
 
-const { apiTag, endpoints } = profileApiDocs;
+const { apiTag, endpoints } = userApiDocs;
 const path = '/profiles';
 
 @Swagger.ApiTags(apiTag)
