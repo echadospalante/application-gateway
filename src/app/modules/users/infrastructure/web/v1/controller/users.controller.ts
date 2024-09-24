@@ -98,36 +98,65 @@ export class UsersController {
   }
 
   @Auth(AppRole.ADMIN)
-  @Http.Patch('/unlock/:id')
+  @Http.Patch('/unlock/:email')
   @Http.HttpCode(Http.HttpStatus.ACCEPTED)
   @Swagger.ApiBearerAuth()
   @Swagger.ApiOperation(endpoints.enableUser)
-  public enableUser(@Http.Param('id') id: string): Promise<void> {
+  public enableUser(@Http.Param('email') email: string): Promise<void> {
     return this.httpAdapter.put(
-      `${this.USERS_MANAGEMENT_URL}/enable/${id}`,
-      {},
-    );
-  }
-
-  @Auth(AppRole.ADMIN)
-  @Http.Patch('/lock/:id')
-  @Http.HttpCode(Http.HttpStatus.ACCEPTED)
-  @Swagger.ApiBearerAuth()
-  @Swagger.ApiOperation(endpoints.disableUser)
-  public disableUser(@Http.Param('id') id: string): Promise<void> {
-    return this.httpAdapter.put(
-      `${this.USERS_MANAGEMENT_URL}/disable/${id}`,
+      `${this.USERS_MANAGEMENT_URL}/enable/${email}`,
       undefined,
     );
   }
 
   @Auth(AppRole.ADMIN)
-  @Http.Delete(':id')
+  @Http.Patch('/lock/:email')
+  @Http.HttpCode(Http.HttpStatus.ACCEPTED)
+  @Swagger.ApiBearerAuth()
+  @Swagger.ApiOperation(endpoints.disableUser)
+  public disableUser(@Http.Param('email') email: string): Promise<void> {
+    return this.httpAdapter.put(
+      `${this.USERS_MANAGEMENT_URL}/disable/${email}`,
+      undefined,
+    );
+  }
+
+  @Auth(AppRole.ADMIN)
+  @Http.Patch('/verify/:email')
+  @Http.HttpCode(Http.HttpStatus.ACCEPTED)
+  @Swagger.ApiBearerAuth()
+  @Swagger.ApiOperation(endpoints.enableUser)
+  public verifyUserAccount(@Http.Param('email') email: string): Promise<void> {
+    console.log({ VERIFY: email });
+    return this.httpAdapter.put(
+      `${this.USERS_MANAGEMENT_URL}/verify/${email}`,
+      undefined,
+    );
+  }
+
+  @Auth(AppRole.ADMIN)
+  @Http.Patch('/unverify/:email')
+  @Http.HttpCode(Http.HttpStatus.ACCEPTED)
+  @Swagger.ApiBearerAuth()
+  @Swagger.ApiOperation(endpoints.disableUser)
+  public unverifyUserAccount(
+    @Http.Param('email') email: string,
+  ): Promise<void> {
+    console.log({ UNVERIFY: email });
+
+    return this.httpAdapter.put(
+      `${this.USERS_MANAGEMENT_URL}/unverify/${email}`,
+      undefined,
+    );
+  }
+
+  @Auth(AppRole.ADMIN)
+  @Http.Delete(':email')
   @Http.HttpCode(Http.HttpStatus.NO_CONTENT)
   @Swagger.ApiBearerAuth()
   @Swagger.ApiOperation(endpoints.deleteUser)
-  public deleteUser(@Http.Param('id') id: string): Promise<void> {
-    return this.httpAdapter.delete(`${this.USERS_MANAGEMENT_URL}/${id}`);
+  public deleteUser(@Http.Param('email') email: string): Promise<void> {
+    return this.httpAdapter.delete(`${this.USERS_MANAGEMENT_URL}/${email}`);
   }
 
   @Auth(AppRole.ADMIN)
