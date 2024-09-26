@@ -11,7 +11,7 @@ import * as jwt from 'jsonwebtoken';
 import * as jwksRsa from 'jwks-rsa';
 import { Observable, from } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
-import { AccessTokenPayload } from 'x-ventures-domain';
+import { AccessTokenPayload } from 'echadospalante-core';
 import { AuthHttpService } from '../../domain/gateway/http/http.gateway';
 import { ConfigService } from '@nestjs/config';
 

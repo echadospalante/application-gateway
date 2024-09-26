@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as Swagger from '@nestjs/swagger';
 
-import { AppRole, Role, User } from 'x-ventures-domain';
+import { AppRole, Role, User } from 'echadospalante-core';
 
 import { AuthCookieInterceptor } from 'src/app/modules/auth/application/interceptors/auth-cookie.interceptor';
 import UserRolesUpdateDto from 'src/app/modules/auth/infrastructure/web/v1/model/request/user-roles-update.dto';

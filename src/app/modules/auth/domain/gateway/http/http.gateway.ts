@@ -1,4 +1,4 @@
-import { User } from 'x-ventures-domain';
+import { User } from 'echadospalante-core';
 
 export interface AuthHttpService {
   getUserById(id: string): Promise<User>;

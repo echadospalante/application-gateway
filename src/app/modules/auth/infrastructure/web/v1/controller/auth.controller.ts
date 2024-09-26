@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import * as Swagger from '@nestjs/swagger';
 
 import { Request, Response } from 'express';
-import { User, UserCreate } from 'x-ventures-domain';
+import { User, UserCreate } from 'echadospalante-core';
 
 import { AuthCookieInterceptor } from 'src/app/modules/auth/application/interceptors/auth-cookie.interceptor';
 import { GoogleTokenInterceptor } from 'src/app/modules/auth/application/interceptors/google-token.interceptor';

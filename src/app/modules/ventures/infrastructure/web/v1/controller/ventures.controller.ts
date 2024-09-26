@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as Swagger from '@nestjs/swagger';
 
-import { Venture, AppRole } from 'x-ventures-domain';
+import { Venture, AppRole } from 'echadospalante-core';
 
 import { HttpService } from '../../../../../../config/http/axios.config';
 import { Auth } from '../../../../../auth/application/decorators';

@@ -2,7 +2,7 @@ import * as Http from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as Swagger from '@nestjs/swagger';
 
-import { Profile, AppRole } from 'x-ventures-domain';
+import { Profile, AppRole } from 'echadospalante-core';
 
 import { HttpService } from '../../../../../../config/http/axios.config';
 import { Auth } from '../../../../../auth/application/decorators';

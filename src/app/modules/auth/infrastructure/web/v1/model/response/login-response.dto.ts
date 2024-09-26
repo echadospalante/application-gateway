@@ -1,4 +1,4 @@
-import { AppRole } from 'x-ventures-domain';
+import { AppRole } from 'echadospalante-core';
 
 export class LoginResponse {
   firstName: string;
