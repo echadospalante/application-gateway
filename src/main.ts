@@ -44,8 +44,8 @@ const main = async () => {
 
   setupSwagger(app);
 
-  await app.listen(4950).then(() => {
-    logger.log(`Server up and running on port ${4950}`);
+  await app.listen(3000).then(() => {
+    logger.log(`Server up and running on port ${3000}`);
   });
 };
 
