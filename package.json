@@ -1,6 +1,6 @@
 {
   "name": "application-gateway",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "NodeJS app for application-gateway",
   "repository": {
     "type": "git",

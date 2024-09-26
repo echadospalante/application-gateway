@@ -6,10 +6,10 @@ import * as Swagger from '@nestjs/swagger';
 
 import { AppRole, Role, User } from 'echadospalante-core';
 
-import { AuthCookieInterceptor } from 'src/app/modules/auth/application/interceptors/auth-cookie.interceptor';
-import UserRolesUpdateDto from 'src/app/modules/auth/infrastructure/web/v1/model/request/user-roles-update.dto';
 import { HttpService } from '../../../../../../config/http/axios.config';
-import { Auth, GetUser } from '../../../../../auth/application/decorators';
+import { AuthCookieInterceptor } from '../../../../../../modules/auth/application/interceptors/auth-cookie.interceptor';
+import UserRolesUpdateDto from '../../../../../../modules/auth/infrastructure/web/v1/model/request/user-roles-update.dto';
+import { Auth } from '../../../../../auth/application/decorators';
 import UserCreateDto from '../model/request/user-create.dto';
 import UserUpdateDto from '../model/request/user-update.dto';
 import { userApiDocs } from '../swagger/users.docs';

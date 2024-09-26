@@ -2,12 +2,12 @@ import { DocumentBuilder, OpenAPIObject } from '@nestjs/swagger';
 import { OperationObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
 
 import { AuthModule } from '../../modules/auth/auth.module';
-import { DonationsModule } from 'src/app/modules/donations/donations.module';
-import { FeedsModule } from 'src/app/modules/feeds/feeds.module';
-import { NewsModule } from 'src/app/modules/news/news.module';
-import { NotificationsModule } from 'src/app/modules/notifications/notifications.module';
-import { UsersModule } from 'src/app/modules/users/users.module';
-import { VenturesModule } from 'src/app/modules/ventures/ventures.module';
+import { DonationsModule } from '../../modules/donations/donations.module';
+import { FeedsModule } from '../../modules/feeds/feeds.module';
+import { NewsModule } from '../../modules/news/news.module';
+import { NotificationsModule } from '../../modules/notifications/notifications.module';
+import { UsersModule } from '../../modules/users/users.module';
+import { VenturesModule } from '../../modules/ventures/ventures.module';
 
 export type SwaggerDocumentData = {
   options: Omit<OpenAPIObject, 'paths'>;

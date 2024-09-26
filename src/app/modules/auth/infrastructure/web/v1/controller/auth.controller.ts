@@ -2,12 +2,12 @@ import * as Http from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as Swagger from '@nestjs/swagger';
 
-import { Request, Response } from 'express';
 import { User, UserCreate } from 'echadospalante-core';
+import { Request, Response } from 'express';
 
-import { AuthCookieInterceptor } from 'src/app/modules/auth/application/interceptors/auth-cookie.interceptor';
-import { GoogleTokenInterceptor } from 'src/app/modules/auth/application/interceptors/google-token.interceptor';
 import { HttpService } from '../../../../../../config/http/axios.config';
+import { AuthCookieInterceptor } from '../../../../../../modules/auth/application/interceptors/auth-cookie.interceptor';
+import { GoogleTokenInterceptor } from '../../../../../../modules/auth/application/interceptors/google-token.interceptor';
 import { Auth, GetUser } from '../../../../application/decorators';
 import { IdTokenPayload } from '../model/request/login-request.dto';
 import UserRegisterCreateDto from '../model/request/user-preferences-create.dto';
