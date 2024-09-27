@@ -4,13 +4,14 @@ import { ConfigService } from '@nestjs/config';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as Swagger from '@nestjs/swagger';
 
-import { Venture, AppRole } from 'echadospalante-core';
+import { Venture, AppRole, VentureCategory } from 'echadospalante-core';
 
 import { HttpService } from '../../../../../../config/http/axios.config';
 import { Auth } from '../../../../../auth/application/decorators';
 import VentureCreateDto from '../model/request/venture-create.dto';
 import VentureUpdateDto from '../model/request/venture-update.dto';
 import { venturesApiDocs } from '../swagger/ventures.docs';
+import VentureCategoriesGetRequestDto from '../model/request/venture-categories-get.dto';
 
 const { apiTag, endpoints } = venturesApiDocs;
 const path = '/ventures';
@@ -33,9 +34,31 @@ export class VenturesController {
   @Http.Get()
   @Http.HttpCode(Http.HttpStatus.OK)
   @Swagger.ApiBearerAuth()
-  @Swagger.ApiOperation(endpoints.getAllVentures)
+  @Swagger.ApiOperation(endpoints.getVentureCategories)
   public getAllVentures(): Promise<Venture[]> {
     return this.httpAdapter.get<Venture[]>(`${this.VENTURES_MANAGEMENT_URL}`);
+  }
+
+  @Auth()
+  @Http.Get('/categories')
+  @Http.HttpCode(Http.HttpStatus.OK)
+  @Swagger.ApiBearerAuth()
+  @Swagger.ApiOperation(endpoints.getAllVentures)
+  public getVentureCategories(
+    @Http.Query() query: VentureCategoriesGetRequestDto,
+  ): Promise<VentureCategory[]> {
+    const { page, size, search } = query;
+    const skip = page * size;
+    const params = new URLSearchParams();
+    params.set('skip', skip.toString());
+    params.set('take', size.toString());
+    search && params.set('search', search);
+
+    return this.httpAdapter.get<VentureCategory[]>(
+      `${this.VENTURES_MANAGEMENT_URL}/categories?includeVentures=false`,
+      undefined,
+      params,
+    );
   }
 
   @Auth(AppRole.ADMIN)

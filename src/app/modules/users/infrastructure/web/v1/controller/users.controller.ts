@@ -37,7 +37,7 @@ export class UsersController {
   @Http.HttpCode(Http.HttpStatus.OK)
   @Swagger.ApiBearerAuth()
   @Swagger.ApiOperation(endpoints.getAllUsers)
-  public getAllUsers(@Http.Query() query: UsersGetRequestDto): Promise<User[]> {
+  public getUsers(@Http.Query() query: UsersGetRequestDto): Promise<User[]> {
     const { page, size, gender, role, search } = query;
     const skip = page * size;
     const params = new URLSearchParams();
