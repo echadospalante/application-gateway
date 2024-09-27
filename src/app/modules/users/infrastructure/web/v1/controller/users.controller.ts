@@ -13,6 +13,7 @@ import { Auth } from '../../../../../auth/application/decorators';
 import UserCreateDto from '../model/request/user-create.dto';
 import UserUpdateDto from '../model/request/user-update.dto';
 import { userApiDocs } from '../swagger/users.docs';
+import UsersGetRequestDto from '../model/request/users-get.dto';
 
 const { apiTag, endpoints } = userApiDocs;
 const path = '/users';
@@ -36,13 +37,12 @@ export class UsersController {
   @Http.HttpCode(Http.HttpStatus.OK)
   @Swagger.ApiBearerAuth()
   @Swagger.ApiOperation(endpoints.getAllUsers)
-  public getAllUsers(
-    @Http.Query('page') page: number,
-    @Http.Query('size') size: number,
-  ): Promise<User[]> {
+  public getAllUsers(@Http.Query() query: UsersGetRequestDto): Promise<User[]> {
+    const { page, size, gender, role, search } = query;
+    console.log({ query });
     const skip = page * size;
     return this.httpAdapter.get<User[]>(
-      `${this.USERS_MANAGEMENT_URL}?includeNotifications=false&includeRoles=true&includeVentures=false&includePreferences=false&includeComments=false&skip=${skip}&take=${size}`,
+      `${this.USERS_MANAGEMENT_URL}?skip=${skip}&take=${size}&includeNotifications=false&includeRoles=true&includeVentures=false&includePreferences=false&includeComments=false`,
     );
   }
 
