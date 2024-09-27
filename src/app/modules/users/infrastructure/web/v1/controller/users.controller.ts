@@ -39,10 +39,18 @@ export class UsersController {
   @Swagger.ApiOperation(endpoints.getAllUsers)
   public getAllUsers(@Http.Query() query: UsersGetRequestDto): Promise<User[]> {
     const { page, size, gender, role, search } = query;
-    console.log({ query });
     const skip = page * size;
+    const params = new URLSearchParams();
+    params.set('skip', skip.toString());
+    params.set('take', size.toString());
+    search && params.set('search', search);
+    role && params.set('role', role);
+    gender && params.set('gender', gender);
+
     return this.httpAdapter.get<User[]>(
-      `${this.USERS_MANAGEMENT_URL}?skip=${skip}&take=${size}&includeNotifications=false&includeRoles=true&includeVentures=false&includePreferences=false&includeComments=false`,
+      `${this.USERS_MANAGEMENT_URL}?includeNotifications=false&includeRoles=true&includeVentures=false&includePreferences=false&includeComments=false&includeDetail=true`,
+      undefined,
+      params,
     );
   }
 
