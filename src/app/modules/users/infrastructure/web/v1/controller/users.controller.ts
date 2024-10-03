@@ -135,7 +135,6 @@ export class UsersController {
   @Swagger.ApiBearerAuth()
   @Swagger.ApiOperation(endpoints.enableUser)
   public verifyUserAccount(@Http.Param('email') email: string): Promise<void> {
-    console.log({ VERIFY: email });
     return this.httpAdapter.put(
       `${this.USERS_MANAGEMENT_URL}/verify/${email}`,
       undefined,
