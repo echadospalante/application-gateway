@@ -4,20 +4,23 @@ import { ConfigService } from '@nestjs/config';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as Swagger from '@nestjs/swagger';
 
-import { Venture, AppRole } from 'echadospalante-core';
+import { Venture, AppRole, VentureCategory } from 'echadospalante-core';
 
 import { HttpService } from '../../../../../../config/http/axios.config';
 import { Auth } from '../../../../../auth/application/decorators';
 import VentureCreateDto from '../model/request/venture-create.dto';
 import VentureUpdateDto from '../model/request/venture-update.dto';
 import { venturesApiDocs } from '../swagger/ventures.docs';
+import VentureCategoriesGetRequestDto from '../model/request/venture-categories-get.dto';
+import VentureCategoriesQueryDto from '../model/request/venture-categories-query.dto';
+import { AuthCookieInterceptor } from '../../../../../../modules/auth/application/interceptors/auth-cookie.interceptor';
 
 const { apiTag, endpoints } = venturesApiDocs;
-const path = '/ventures';
+const path = '/ventures/categories';
 
 @Swagger.ApiTags(apiTag)
 @Http.Controller(path)
-export class VenturesController {
+export class VentureCategoriesController {
   private readonly VENTURES_MANAGEMENT_URL: string;
 
   public constructor(
@@ -26,7 +29,54 @@ export class VenturesController {
   ) {
     this.VENTURES_MANAGEMENT_URL = `${this.configService.getOrThrow<string>(
       'VENTURES_MANAGEMENT_URL',
-    )}/api/v1/ventures`;
+    )}/api/v1/ventures/categories`;
+  }
+
+  @Auth()
+  @Http.Get()
+  @Http.HttpCode(Http.HttpStatus.OK)
+  @Swagger.ApiBearerAuth()
+  @Swagger.ApiOperation(endpoints.getVentureCategories)
+  @Http.UseInterceptors(AuthCookieInterceptor)
+  public getAllVentureCategories(
+    @Http.Query() query: VentureCategoriesQueryDto,
+  ): Promise<VentureCategory[]> {
+    const { page, size, search, includeVentures } = query;
+    console.log(query);
+    const skip = page * size;
+    const params = new URLSearchParams();
+    params.set('skip', skip.toString());
+    params.set('take', size.toString());
+    search && params.set('search', search);
+    // includeUsers && params.set('includeUsers', includeUsers + '');
+    includeVentures && params.set('includeVentures', includeVentures + '');
+    return this.httpAdapter.get<VentureCategory[]>(
+      `${this.VENTURES_MANAGEMENT_URL}`,
+      undefined,
+      params,
+    );
+  }
+
+  @Auth()
+  @Http.Get('')
+  @Http.HttpCode(Http.HttpStatus.OK)
+  @Swagger.ApiBearerAuth()
+  @Swagger.ApiOperation(endpoints.getAllVentures)
+  public getVentureCategories(
+    @Http.Query() query: VentureCategoriesGetRequestDto,
+  ): Promise<VentureCategory[]> {
+    const { page, size, search } = query;
+    const skip = page * size;
+    const params = new URLSearchParams();
+    params.set('skip', skip.toString());
+    params.set('take', size.toString());
+    search && params.set('search', search);
+
+    return this.httpAdapter.get<VentureCategory[]>(
+      `${this.VENTURES_MANAGEMENT_URL}/categories?includeVentures=false`,
+      undefined,
+      params,
+    );
   }
 
   @Auth(AppRole.ADMIN)
