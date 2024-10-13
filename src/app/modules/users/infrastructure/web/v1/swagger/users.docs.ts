@@ -1,7 +1,7 @@
 import { ApiDocs } from '../../../../../../config/swagger/swagger.config';
 
-export const profileApiDocs: ApiDocs = {
-  apiTag: '/profiles',
+export const userApiDocs: ApiDocs = {
+  apiTag: '/users',
   endpoints: {
     getAllUsers: {
       summary: 'Get all users info - [ADMIN]',
@@ -51,6 +51,14 @@ export const profileApiDocs: ApiDocs = {
       parameters: [
         { name: 'id', in: 'path', required: true, schema: { type: 'string' } },
       ],
+    },
+    fetchUserRoles: {
+      summary: 'Fetch user roles - [ADMIN]',
+      description: 'This endpoint fetches user roles.',
+    },
+    updateUserRoles: {
+      summary: 'Update user roles - [ADMIN]',
+      description: 'This endpoint updates user roles.',
     },
   },
 };

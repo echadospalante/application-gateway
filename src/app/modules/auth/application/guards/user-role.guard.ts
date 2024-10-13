@@ -8,7 +8,7 @@ import {
 import { Reflector } from '@nestjs/core';
 
 import { Observable } from 'rxjs';
-import { AppRole, User } from 'x-ventures-domain';
+import { AppRole, User } from 'echadospalante-core';
 
 import { META_ROLES } from '../decorators/role-protected.decorator';
 

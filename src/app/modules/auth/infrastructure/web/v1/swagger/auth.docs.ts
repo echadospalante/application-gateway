@@ -30,5 +30,9 @@ export const authApiDocs: ApiDocs = {
       summary: 'Reset password',
       description: 'This endpoint resets a password.',
     },
+    changeUserRoles: {
+      summary: 'Change user roles - [ADMIN]',
+      description: 'This endpoint changes the user roles.',
+    },
   },
 };

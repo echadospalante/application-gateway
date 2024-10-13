@@ -7,13 +7,14 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 
+import { AccessTokenPayload } from 'echadospalante-core';
 import * as jwt from 'jsonwebtoken';
 import * as jwksRsa from 'jwks-rsa';
 import { Observable, from } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
-import { AccessTokenPayload } from 'x-ventures-domain';
-import { AuthHttpService } from '../../domain/gateway/http/http.gateway';
+
 import { ConfigService } from '@nestjs/config';
+import { AuthHttpService } from '../../domain/gateway/http/http.gateway';
 
 @Injectable()
 export class GoogleTokenInterceptor implements NestInterceptor {

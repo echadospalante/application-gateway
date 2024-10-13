@@ -3,6 +3,10 @@ import { ApiDocs } from '../../../../../../config/swagger/swagger.config';
 export const venturesApiDocs: ApiDocs = {
   apiTag: '/ventures',
   endpoints: {
+    getVentureCategories: {
+      summary: 'Get venture categories - [ANY]',
+      description: 'This endpoint retrieves venture categories.',
+    },
     getAllVentures: {
       summary: 'Get all ventures info - [ADMIN]',
       description: 'This endpoint retrieves all ventures.',

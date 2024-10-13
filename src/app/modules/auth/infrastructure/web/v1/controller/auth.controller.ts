@@ -2,12 +2,12 @@ import * as Http from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as Swagger from '@nestjs/swagger';
 
+import { User, UserCreate } from 'echadospalante-core';
 import { Request, Response } from 'express';
-import { User, UserCreate } from 'x-ventures-domain';
 
-import { AuthCookieInterceptor } from 'src/app/modules/auth/application/interceptors/auth-cookie.interceptor';
-import { GoogleTokenInterceptor } from 'src/app/modules/auth/application/interceptors/google-token.interceptor';
 import { HttpService } from '../../../../../../config/http/axios.config';
+import { AuthCookieInterceptor } from '../../../../../../modules/auth/application/interceptors/auth-cookie.interceptor';
+import { GoogleTokenInterceptor } from '../../../../../../modules/auth/application/interceptors/google-token.interceptor';
 import { Auth, GetUser } from '../../../../application/decorators';
 import { IdTokenPayload } from '../model/request/login-request.dto';
 import UserRegisterCreateDto from '../model/request/user-preferences-create.dto';
@@ -39,11 +39,12 @@ export class AuthController {
     const payload = request.user as IdTokenPayload;
     const user = {
       email: payload.email,
-      picture: payload.picture,
+      picture:
+        payload.picture ||
+        'https://cdn-icons-png.flaticon.com/512/3607/3607444.png',
       firstName: payload.given_name,
       lastName: payload.family_name,
     };
-    console.log(payload);
     return this.httpAdapter.post<UserCreate, LoginResponse>(
       `${this.USERS_MANAGEMENT_URL}`,
       user,
@@ -85,9 +86,12 @@ export class AuthController {
     @Http.Body() registerInfo: UserRegisterCreateDto,
   ) {
     console.log({ user, registerInfo });
-    return this.httpAdapter.post(
-      `${this.USERS_MANAGEMENT_URL}/register/${user.email}`,
-      { ...registerInfo },
-    );
+    return this.httpAdapter
+      .post(`${this.USERS_MANAGEMENT_URL}/register/${user.email}`, {
+        ...registerInfo,
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }
 }

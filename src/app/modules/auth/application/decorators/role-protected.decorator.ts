@@ -1,6 +1,6 @@
 import { SetMetadata } from '@nestjs/common';
 
-import { AppRole } from 'x-ventures-domain';
+import { AppRole } from 'echadospalante-core';
 
 export const META_ROLES = 'roles';
 

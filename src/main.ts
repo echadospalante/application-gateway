@@ -23,10 +23,7 @@ const main = async () => {
 
   // CORS
   app.enableCors({
-    origin: [
-      'http://localhost:5173',
-      'https://t9sn292b-5173.use2.devtunnels.ms',
-    ],
+    origin: ['http://localhost:5173', 'https://echadospalante.com'],
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
     credentials: true,
   });
@@ -44,8 +41,8 @@ const main = async () => {
 
   setupSwagger(app);
 
-  await app.listen(5000).then(() => {
-    logger.log(`Server up and running on port ${5000}`);
+  await app.listen(3000).then(() => {
+    logger.log(`Server up and running on port ${3000}`);
   });
 };
 

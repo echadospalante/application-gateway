@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { AuthHttpService } from '../../domain/gateway/http/http.gateway';
-import { User } from 'x-ventures-domain';
-import { HttpService } from 'src/app/config/http/axios.config';
 import { ConfigService } from '@nestjs/config';
+
+import { User } from 'echadospalante-core';
+
+import { HttpService } from '../../../../config/http/axios.config';
+import { AuthHttpService } from '../../domain/gateway/http/http.gateway';
 
 @Injectable()
 export class AuthHttpAdapter implements AuthHttpService {

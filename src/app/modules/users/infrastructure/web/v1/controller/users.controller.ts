@@ -4,16 +4,19 @@ import { ConfigService } from '@nestjs/config';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as Swagger from '@nestjs/swagger';
 
-import { AppRole, User } from 'x-ventures-domain';
+import { AppRole, Role, User } from 'echadospalante-core';
 
 import { HttpService } from '../../../../../../config/http/axios.config';
+import { AuthCookieInterceptor } from '../../../../../../modules/auth/application/interceptors/auth-cookie.interceptor';
+import UserRolesUpdateDto from '../../../../../../modules/auth/infrastructure/web/v1/model/request/user-roles-update.dto';
 import { Auth } from '../../../../../auth/application/decorators';
 import UserCreateDto from '../model/request/user-create.dto';
 import UserUpdateDto from '../model/request/user-update.dto';
-import { profileApiDocs } from '../swagger/users.docs';
+import { userApiDocs } from '../swagger/users.docs';
+import UsersGetRequestDto from '../model/request/users-get.dto';
 
-const { apiTag, endpoints } = profileApiDocs;
-const path = 'users';
+const { apiTag, endpoints } = userApiDocs;
+const path = '/users';
 
 @Swagger.ApiTags(apiTag)
 @Http.Controller(path)
@@ -34,13 +37,20 @@ export class UsersController {
   @Http.HttpCode(Http.HttpStatus.OK)
   @Swagger.ApiBearerAuth()
   @Swagger.ApiOperation(endpoints.getAllUsers)
-  public getAllUsers(
-    @Http.Query('page') page: number,
-    @Http.Query('size') size: number,
-  ): Promise<User[]> {
+  public getUsers(@Http.Query() query: UsersGetRequestDto): Promise<User[]> {
+    const { page, size, gender, role, search } = query;
     const skip = page * size;
+    const params = new URLSearchParams();
+    params.set('skip', skip.toString());
+    params.set('take', size.toString());
+    search && params.set('search', search);
+    role && params.set('role', role);
+    gender && params.set('gender', gender);
+
     return this.httpAdapter.get<User[]>(
-      `${this.USERS_MANAGEMENT_URL}?includeNotifications=false&includeRoles=true&includeVentures=false&includePreferences=false&includeComments=false&skip=${skip}&take=${size}`,
+      `${this.USERS_MANAGEMENT_URL}?includeNotifications=false&includeRoles=true&includeVentures=false&includePreferences=false&includeComments=false&includeDetail=true`,
+      undefined,
+      params,
     );
   }
 
@@ -69,7 +79,6 @@ export class UsersController {
       image: image.buffer.toString('base64'),
       mimeType: image.mimetype,
     };
-    console.log({ data });
     return this.httpAdapter.post(`${this.USERS_MANAGEMENT_URL}`, data);
   }
 
@@ -97,36 +106,64 @@ export class UsersController {
   }
 
   @Auth(AppRole.ADMIN)
-  @Http.Patch('/unlock/:id')
+  @Http.Patch('/unlock/:email')
   @Http.HttpCode(Http.HttpStatus.ACCEPTED)
   @Swagger.ApiBearerAuth()
   @Swagger.ApiOperation(endpoints.enableUser)
-  public enableUser(@Http.Param('id') id: string): Promise<void> {
+  public enableUser(@Http.Param('email') email: string): Promise<void> {
     return this.httpAdapter.put(
-      `${this.USERS_MANAGEMENT_URL}/enable/${id}`,
-      {},
-    );
-  }
-
-  @Auth(AppRole.ADMIN)
-  @Http.Patch('/lock/:id')
-  @Http.HttpCode(Http.HttpStatus.ACCEPTED)
-  @Swagger.ApiBearerAuth()
-  @Swagger.ApiOperation(endpoints.disableUser)
-  public disableUser(@Http.Param('id') id: string): Promise<void> {
-    return this.httpAdapter.put(
-      `${this.USERS_MANAGEMENT_URL}/disable/${id}`,
+      `${this.USERS_MANAGEMENT_URL}/enable/${email}`,
       undefined,
     );
   }
 
   @Auth(AppRole.ADMIN)
-  @Http.Delete(':id')
+  @Http.Patch('/lock/:email')
+  @Http.HttpCode(Http.HttpStatus.ACCEPTED)
+  @Swagger.ApiBearerAuth()
+  @Swagger.ApiOperation(endpoints.disableUser)
+  public disableUser(@Http.Param('email') email: string): Promise<void> {
+    return this.httpAdapter.put(
+      `${this.USERS_MANAGEMENT_URL}/disable/${email}`,
+      undefined,
+    );
+  }
+
+  @Auth(AppRole.ADMIN)
+  @Http.Patch('/verify/:email')
+  @Http.HttpCode(Http.HttpStatus.ACCEPTED)
+  @Swagger.ApiBearerAuth()
+  @Swagger.ApiOperation(endpoints.enableUser)
+  public verifyUserAccount(@Http.Param('email') email: string): Promise<void> {
+    return this.httpAdapter.put(
+      `${this.USERS_MANAGEMENT_URL}/verify/${email}`,
+      undefined,
+    );
+  }
+
+  @Auth(AppRole.ADMIN)
+  @Http.Patch('/unverify/:email')
+  @Http.HttpCode(Http.HttpStatus.ACCEPTED)
+  @Swagger.ApiBearerAuth()
+  @Swagger.ApiOperation(endpoints.disableUser)
+  public unverifyUserAccount(
+    @Http.Param('email') email: string,
+  ): Promise<void> {
+    console.log({ UNVERIFY: email });
+
+    return this.httpAdapter.put(
+      `${this.USERS_MANAGEMENT_URL}/unverify/${email}`,
+      undefined,
+    );
+  }
+
+  @Auth(AppRole.ADMIN)
+  @Http.Delete(':email')
   @Http.HttpCode(Http.HttpStatus.NO_CONTENT)
   @Swagger.ApiBearerAuth()
   @Swagger.ApiOperation(endpoints.deleteUser)
-  public deleteUser(@Http.Param('id') id: string): Promise<void> {
-    return this.httpAdapter.delete(`${this.USERS_MANAGEMENT_URL}/${id}`);
+  public deleteUser(@Http.Param('email') email: string): Promise<void> {
+    return this.httpAdapter.delete(`${this.USERS_MANAGEMENT_URL}/${email}`);
   }
 
   @Auth(AppRole.ADMIN)
@@ -146,6 +183,30 @@ export class UsersController {
     return this.httpAdapter.put(
       `${this.USERS_MANAGEMENT_URL}/image/${ventureId}`,
       formData,
+    );
+  }
+
+  @Auth(AppRole.ADMIN)
+  @Http.Get('/roles')
+  @Http.HttpCode(Http.HttpStatus.OK)
+  @Swagger.ApiBearerAuth()
+  @Swagger.ApiOperation(endpoints.fetchUserRoles)
+  @Http.UseInterceptors(AuthCookieInterceptor)
+  public fetchUserRoles() {
+    return this.httpAdapter.get<Role[]>(`${this.USERS_MANAGEMENT_URL}/roles`);
+  }
+
+  @Auth(AppRole.ADMIN)
+  @Http.Patch('/roles')
+  @Http.HttpCode(Http.HttpStatus.ACCEPTED)
+  @Swagger.ApiBearerAuth()
+  @Swagger.ApiOperation(endpoints.changeUserRoles)
+  @Http.UseInterceptors(AuthCookieInterceptor)
+  public changeUserRoles(@Http.Body() userRolesUpdateDto: UserRolesUpdateDto) {
+    console.log({ userRolesUpdateDto });
+    return this.httpAdapter.put<UserRolesUpdateDto, void>(
+      `${this.USERS_MANAGEMENT_URL}/roles`,
+      { ...userRolesUpdateDto },
     );
   }
 }

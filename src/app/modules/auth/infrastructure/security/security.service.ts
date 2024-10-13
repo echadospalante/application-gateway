@@ -5,7 +5,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
 import { decode, sign, verify } from 'jsonwebtoken';
 import { Strategy } from 'passport-jwt';
-import { AccessTokenPayload, User } from 'x-ventures-domain';
+import { AccessTokenPayload, User } from 'echadospalante-core';
 
 import { HttpService } from '../../../../config/http/axios.config';
 

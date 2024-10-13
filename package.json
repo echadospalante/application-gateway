@@ -1,12 +1,12 @@
 {
   "name": "application-gateway",
-  "version": "1.0.0",
+  "version": "1.0.5",
   "description": "NodeJS app for application-gateway",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/echadospalante/application-gateway.git"
   },
-  "author": "Juan Camilo Cardona Calderón",
+  "author": "Juan Camilo Cardona Calderón, Maria Carolina Cardona Calderón",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/echadospalante/application-gateway/issues"
@@ -38,6 +38,7 @@
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+    "echadospalante-core": "^8.4.2",
     "helmet": "^7.1.0",
     "joi": "^17.12.2",
     "jsonwebtoken": "^9.0.2",
@@ -46,8 +47,7 @@
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.2.1",
     "rxjs": "^7.8.1",
-    "swagger-ui-express": "^5.0.0",
-    "x-ventures-domain": "file:../x-ventures-domain"
+    "swagger-ui-express": "^5.0.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.3.2",
