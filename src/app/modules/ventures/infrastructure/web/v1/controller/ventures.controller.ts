@@ -1,13 +1,14 @@
+import { GoogleTokenInterceptor } from './../../../../../auth/application/interceptors/google-token.interceptor';
 import * as Http from '@nestjs/common';
 import { UseInterceptors } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as Swagger from '@nestjs/swagger';
 
-import { Venture, AppRole } from 'echadospalante-core';
+import { Venture, AppRole, User } from 'echadospalante-core';
 
 import { HttpService } from '../../../../../../config/http/axios.config';
-import { Auth } from '../../../../../auth/application/decorators';
+import { Auth, GetUser } from '../../../../../auth/application/decorators';
 import VentureCreateDto from '../model/request/venture-create.dto';
 import VentureUpdateDto from '../model/request/venture-update.dto';
 import { venturesApiDocs } from '../swagger/ventures.docs';
@@ -29,24 +30,41 @@ export class VenturesController {
     )}/api/v1/ventures`;
   }
 
-  @Auth(AppRole.ADMIN)
+  @Auth()
   @Http.Post()
   @Http.HttpCode(Http.HttpStatus.CREATED)
   @UseInterceptors(FileInterceptor('image'))
   @Swagger.ApiBearerAuth()
   @Swagger.ApiOperation(endpoints.createVenture)
   @Swagger.ApiConsumes('multipart/form-data')
+  @Http.UseInterceptors(GoogleTokenInterceptor)
   public async createVenture(
-    @Http.UploadedFile() image: Express.Multer.File,
+    @GetUser() user: User,
+    @Http.UploadedFile() coverPhoto: Express.Multer.File,
     @Http.Body() ventureCreateDto: VentureCreateDto,
   ): Promise<void> {
-    const data = {
-      ...ventureCreateDto,
-      image: image.buffer.toString('base64'),
-      mimeType: image.mimetype,
-    };
-    console.log({ data });
-    return this.httpAdapter.post(`${this.VENTURES_MANAGEMENT_URL}`, data);
+    const formData = new FormData();
+    formData.append('coverPhoto', coverPhoto.buffer.toString('base64'));
+    formData.append('mimeType', coverPhoto.mimetype);
+    formData.append('name', ventureCreateDto.name);
+    formData.append('description', ventureCreateDto.description);
+    formData.append('categoriesIds', ventureCreateDto.categoriesIds.join(','));
+    formData.append('contactEmail', ventureCreateDto.contactEmail);
+    formData.append('contactPhoneNumber', ventureCreateDto.contactPhoneNumber);
+    formData.append('locationLat', String(ventureCreateDto.locationLat));
+    formData.append('locationLng', String(ventureCreateDto.locationLng));
+    formData.append('ownerEmail', user.email);
+
+    formData.append(
+      'locationDescription',
+      ventureCreateDto.locationDescription,
+    );
+
+    return this.httpAdapter.post<FormData, any>(
+      `${this.VENTURES_MANAGEMENT_URL}`,
+      formData,
+      { 'Content-Type': 'multipart/form-data' },
+    );
   }
 
   @Auth(AppRole.ADMIN)
