@@ -11,7 +11,6 @@ import { Auth } from '../../../../../auth/application/decorators';
 import VentureCreateDto from '../model/request/venture-create.dto';
 import VentureUpdateDto from '../model/request/venture-update.dto';
 import { venturesApiDocs } from '../swagger/ventures.docs';
-import VentureCategoriesGetRequestDto from '../model/request/venture-categories-get.dto';
 import VentureCategoriesQueryDto from '../model/request/venture-categories-query.dto';
 import { AuthCookieInterceptor } from '../../../../../../modules/auth/application/interceptors/auth-cookie.interceptor';
 
@@ -42,7 +41,6 @@ export class VentureCategoriesController {
     @Http.Query() query: VentureCategoriesQueryDto,
   ): Promise<VentureCategory[]> {
     const { page, size, search, includeVentures } = query;
-    console.log(query);
     const skip = page * size;
     const params = new URLSearchParams();
     params.set('skip', skip.toString());
@@ -52,28 +50,6 @@ export class VentureCategoriesController {
     includeVentures && params.set('includeVentures', includeVentures + '');
     return this.httpAdapter.get<VentureCategory[]>(
       `${this.VENTURES_MANAGEMENT_URL}`,
-      undefined,
-      params,
-    );
-  }
-
-  @Auth()
-  @Http.Get('')
-  @Http.HttpCode(Http.HttpStatus.OK)
-  @Swagger.ApiBearerAuth()
-  @Swagger.ApiOperation(endpoints.getAllVentures)
-  public getVentureCategories(
-    @Http.Query() query: VentureCategoriesGetRequestDto,
-  ): Promise<VentureCategory[]> {
-    const { page, size, search } = query;
-    const skip = page * size;
-    const params = new URLSearchParams();
-    params.set('skip', skip.toString());
-    params.set('take', size.toString());
-    search && params.set('search', search);
-
-    return this.httpAdapter.get<VentureCategory[]>(
-      `${this.VENTURES_MANAGEMENT_URL}/categories?includeVentures=false`,
       undefined,
       params,
     );

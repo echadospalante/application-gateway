@@ -1,16 +1,11 @@
 import { Transform } from 'class-transformer';
 import * as Validate from 'class-validator';
 
-import {
-  ComplexInclude,
-  Pagination,
-  VentureCategory,
-} from 'echadospalante-core';
+import { ComplexInclude, VentureCategory } from 'echadospalante-core';
 
 import { VentureFilters } from '../../../../../domain/core/venture-filters';
 
 export default class VentureCategoriesQueryDto {
-
   @Transform(({ value }) => value === 'true')
   @Validate.IsBoolean()
   @Validate.IsOptional()
@@ -24,7 +19,7 @@ export default class VentureCategoriesQueryDto {
   @Transform((param) => parseInt(param.value))
   @Validate.IsNumber()
   @Validate.IsInt()
-  @Validate.Min(1)
+  @Validate.Min(-1)
   public size: number;
 
   @Validate.IsString()
