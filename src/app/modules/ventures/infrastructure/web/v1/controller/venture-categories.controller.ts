@@ -1,24 +1,25 @@
-import { GoogleTokenInterceptor } from './../../../../../auth/application/interceptors/google-token.interceptor';
 import * as Http from '@nestjs/common';
 import { UseInterceptors } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as Swagger from '@nestjs/swagger';
 
-import { Venture, AppRole, User } from 'echadospalante-core';
+import { Venture, AppRole, VentureCategory } from 'echadospalante-core';
 
 import { HttpService } from '../../../../../../config/http/axios.config';
-import { Auth, GetUser } from '../../../../../auth/application/decorators';
+import { Auth } from '../../../../../auth/application/decorators';
 import VentureCreateDto from '../model/request/venture-create.dto';
 import VentureUpdateDto from '../model/request/venture-update.dto';
 import { venturesApiDocs } from '../swagger/ventures.docs';
+import VentureCategoriesQueryDto from '../model/request/venture-categories-query.dto';
+import { AuthCookieInterceptor } from '../../../../../../modules/auth/application/interceptors/auth-cookie.interceptor';
 
 const { apiTag, endpoints } = venturesApiDocs;
-const path = '/ventures';
+const path = '/ventures/categories';
 
 @Swagger.ApiTags(apiTag)
 @Http.Controller(path)
-export class VenturesController {
+export class VentureCategoriesController {
   private readonly VENTURES_MANAGEMENT_URL: string;
 
   public constructor(
@@ -27,44 +28,51 @@ export class VenturesController {
   ) {
     this.VENTURES_MANAGEMENT_URL = `${this.configService.getOrThrow<string>(
       'VENTURES_MANAGEMENT_URL',
-    )}/api/v1/ventures`;
+    )}/api/v1/ventures/categories`;
   }
 
   @Auth()
+  @Http.Get()
+  @Http.HttpCode(Http.HttpStatus.OK)
+  @Swagger.ApiBearerAuth()
+  @Swagger.ApiOperation(endpoints.getVentureCategories)
+  @Http.UseInterceptors(AuthCookieInterceptor)
+  public getAllVentureCategories(
+    @Http.Query() query: VentureCategoriesQueryDto,
+  ): Promise<VentureCategory[]> {
+    const { page, size, search, includeVentures } = query;
+    const skip = page * size;
+    const params = new URLSearchParams();
+    params.set('skip', skip.toString());
+    params.set('take', size.toString());
+    search && params.set('search', search);
+    // includeUsers && params.set('includeUsers', includeUsers + '');
+    includeVentures && params.set('includeVentures', includeVentures + '');
+    return this.httpAdapter.get<VentureCategory[]>(
+      `${this.VENTURES_MANAGEMENT_URL}`,
+      undefined,
+      params,
+    );
+  }
+
+  @Auth(AppRole.ADMIN)
   @Http.Post()
   @Http.HttpCode(Http.HttpStatus.CREATED)
   @UseInterceptors(FileInterceptor('image'))
   @Swagger.ApiBearerAuth()
   @Swagger.ApiOperation(endpoints.createVenture)
   @Swagger.ApiConsumes('multipart/form-data')
-  @Http.UseInterceptors(GoogleTokenInterceptor)
   public async createVenture(
-    @GetUser() user: User,
-    @Http.UploadedFile() coverPhoto: Express.Multer.File,
+    @Http.UploadedFile() image: Express.Multer.File,
     @Http.Body() ventureCreateDto: VentureCreateDto,
   ): Promise<void> {
-    const formData = new FormData();
-    formData.append('coverPhoto', coverPhoto.buffer.toString('base64'));
-    formData.append('mimeType', coverPhoto.mimetype);
-    formData.append('name', ventureCreateDto.name);
-    formData.append('description', ventureCreateDto.description);
-    formData.append('categoriesIds', ventureCreateDto.categoriesIds.join(','));
-    formData.append('contactEmail', ventureCreateDto.contactEmail);
-    formData.append('contactPhoneNumber', ventureCreateDto.contactPhoneNumber);
-    formData.append('locationLat', String(ventureCreateDto.locationLat));
-    formData.append('locationLng', String(ventureCreateDto.locationLng));
-    formData.append('ownerEmail', user.email);
-
-    formData.append(
-      'locationDescription',
-      ventureCreateDto.locationDescription,
-    );
-
-    return this.httpAdapter.post<FormData, any>(
-      `${this.VENTURES_MANAGEMENT_URL}`,
-      formData,
-      { 'Content-Type': 'multipart/form-data' },
-    );
+    const data = {
+      ...ventureCreateDto,
+      image: image.buffer.toString('base64'),
+      mimeType: image.mimetype,
+    };
+    console.log({ data });
+    return this.httpAdapter.post(`${this.VENTURES_MANAGEMENT_URL}`, data);
   }
 
   @Auth(AppRole.ADMIN)
