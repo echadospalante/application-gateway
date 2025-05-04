@@ -1,0 +1,9 @@
+export enum AppRole {
+  MASTER = 'MASTER',
+  ADMIN = 'ADMIN',
+  VALUADOR = 'VALUADOR',
+  VISITADOR = 'VISITADOR',
+  CORREDOR = 'CORREDOR',
+  CLIENTE = 'CLIENTE',
+  BANCO = 'BANCO',
+}

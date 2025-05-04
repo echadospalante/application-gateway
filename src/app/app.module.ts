@@ -1,33 +1,54 @@
+import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
 
-import { environment } from '../env/env';
-import { JoiValidationSchema } from '../env/joi.config';
-import { HttpService } from './config/http/axios.config';
-import { AuthModule } from './modules/auth/auth.module';
-import { DonationsModule } from './modules/donations/donations.module';
-import { FeedsModule } from './modules/feeds/feeds.module';
-import { NewsModule } from './modules/news/news.module';
-import { NotificationsModule } from './modules/notifications/notifications.module';
-import { UsersModule } from './modules/users/users.module';
-import { VenturesModule } from './modules/ventures/ventures.module';
+import { environment, JoiValidationSchema } from '../env/env.setup';
+import { AuthController } from './controllers/auth/auth.controller';
+import { UsersController } from './controllers/user/users.controller';
+import { VentureCategoriesController } from './controllers/venture/venture-categories.controller';
+import { VenturesController } from './controllers/venture/ventures.controller';
+import { HealthService } from './health/health.service';
+import { AuthCookieInterceptor } from './interceptors/auth-cookie.interceptor';
+import { GoogleTokenInterceptor } from './interceptors/google-token.interceptor';
+import { ProxyService } from './proxy/request-proxy.service';
+import { SecurityService } from './security/security.service';
 
 @Module({
-  providers: [HttpService],
-  exports: [HttpService],
+  controllers: [
+    AuthController,
+    UsersController,
+    VentureCategoriesController,
+    VenturesController,
+  ],
+  providers: [
+    ProxyService,
+    SecurityService,
+    AuthCookieInterceptor,
+    HealthService,
+    GoogleTokenInterceptor,
+  ],
   imports: [
     ConfigModule.forRoot({
       envFilePath: ['.env'],
       load: [environment],
       validationSchema: JoiValidationSchema,
+      isGlobal: true,
     }),
-    AuthModule,
-    DonationsModule,
-    FeedsModule,
-    NewsModule,
-    NotificationsModule,
-    UsersModule,
-    VenturesModule,
+    HttpModule,
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_TOKEN_SECRET'),
+        signOptions: {
+          expiresIn: configService.get<string>('JWT_TOKEN_EXPIRATION'),
+        },
+      }),
+    }),
   ],
+  exports: [PassportModule, JwtModule],
 })
 export class AppModule {}

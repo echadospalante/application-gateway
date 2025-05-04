@@ -2,8 +2,7 @@
 /dist
 /node_modules
 
-# Generated files
-/generated
+.env
 
 # Logs
 logs
