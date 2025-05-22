@@ -1,9 +1,7 @@
-import { AppRole } from './role';
-
 export interface AccessTokenPayload {
-  id: number;
-  roles: AppRole[];
-  // email: string;
+  // id: number;
+  // roles: AppRole[];
+  email: string;
   iat: number;
   exp: number;
 }

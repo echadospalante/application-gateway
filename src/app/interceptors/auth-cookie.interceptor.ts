@@ -39,7 +39,6 @@ export class AuthCookieInterceptor implements NestInterceptor {
       );
       const secret: jwt.Secret =
         this.configService.getOrThrow('JWT_TOKEN_SECRET');
-
       request.user = payload as JwtPayload;
 
       return next.handle().pipe(

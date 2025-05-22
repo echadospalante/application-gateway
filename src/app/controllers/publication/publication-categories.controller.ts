@@ -1,72 +1,56 @@
 import * as Http from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-import { Request } from 'express';
 import { AppRole } from 'echadospalante-domain';
+import { Request } from 'express';
 
 import { GetUser } from '../../decorators';
 import { Auth } from '../../decorators/auth.decorator';
 import { AuthCookieInterceptor } from '../../interceptors/auth-cookie.interceptor';
 import { User } from '../../interfaces/user';
 import { ProxyService } from '../../proxy/request-proxy.service';
-import { FileInterceptor } from '@nestjs/platform-express';
 
-const path = '/ventures';
+const path = '/publications/categories';
 
 @Http.Controller(path)
-export class VenturesController {
-  private readonly VENTURES_MANAGEMENT_HOST: string;
+export class PublicationCategoriesController {
+  private readonly PUBLICATION_CATEGORIES_HOST: string;
 
   public constructor(
     private readonly proxyService: ProxyService,
     private readonly configService: ConfigService,
   ) {
-    this.VENTURES_MANAGEMENT_HOST = `${this.configService.getOrThrow<string>(
+    this.PUBLICATION_CATEGORIES_HOST = `${this.configService.getOrThrow<string>(
       'VENTURES_MANAGEMENT_HOST',
     )}`;
-  }
-
-  @Auth(AppRole.ADMIN, AppRole.USER)
-  @Http.Post('/cover-photo')
-  @Http.UseInterceptors(FileInterceptor('file'))
-  @Http.HttpCode(Http.HttpStatus.CREATED)
-  @Http.UseInterceptors(AuthCookieInterceptor)
-  public createCoverPhoto(
-    @Http.Req() request: Request,
-    @GetUser() user: User,
-    @Http.UploadedFile() file: Express.Multer.File,
-  ) {
-    return this.proxyService.forwardFile(
-      request,
-      file,
-      this.VENTURES_MANAGEMENT_HOST,
-      user,
-    );
-  }
-
-  @Auth(AppRole.ADMIN, AppRole.USER)
-  @Http.Post('')
-  @Http.HttpCode(Http.HttpStatus.CREATED)
-  @Http.UseInterceptors(AuthCookieInterceptor)
-  public createVenture(@Http.Req() request: Request, @GetUser() user: User) {
-    return this.proxyService.forward(
-      request,
-      this.VENTURES_MANAGEMENT_HOST,
-      user,
-    );
   }
 
   @Auth()
   @Http.Get('')
   @Http.HttpCode(Http.HttpStatus.OK)
   @Http.UseInterceptors(AuthCookieInterceptor)
-  public async getVentures(
+  public async getPublicationCategories(
     @Http.Req() request: Request,
     @GetUser() user: User,
   ) {
     return this.proxyService.forward(
       request,
-      this.VENTURES_MANAGEMENT_HOST,
+      this.PUBLICATION_CATEGORIES_HOST,
+      user,
+    );
+  }
+
+  @Auth(AppRole.ADMIN)
+  @Http.Post('')
+  @Http.HttpCode(Http.HttpStatus.ACCEPTED)
+  @Http.UseInterceptors(AuthCookieInterceptor)
+  public createPublicationCategory(
+    @Http.Req() request: Request,
+    @GetUser() user: User,
+  ) {
+    return this.proxyService.forward(
+      request,
+      this.PUBLICATION_CATEGORIES_HOST,
       user,
     );
   }
@@ -75,10 +59,13 @@ export class VenturesController {
   @Http.Put('')
   @Http.HttpCode(Http.HttpStatus.ACCEPTED)
   @Http.UseInterceptors(AuthCookieInterceptor)
-  public updateVenture(@Http.Req() request: Request, @GetUser() user: User) {
+  public updatePublicationCategory(
+    @Http.Req() request: Request,
+    @GetUser() user: User,
+  ) {
     return this.proxyService.forward(
       request,
-      this.VENTURES_MANAGEMENT_HOST,
+      this.PUBLICATION_CATEGORIES_HOST,
       user,
     );
   }

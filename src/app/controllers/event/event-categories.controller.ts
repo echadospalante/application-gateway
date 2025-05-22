@@ -10,17 +10,17 @@ import { AuthCookieInterceptor } from '../../interceptors/auth-cookie.intercepto
 import { User } from '../../interfaces/user';
 import { ProxyService } from '../../proxy/request-proxy.service';
 
-const path = '/ventures/categories';
+const path = '/events/categories';
 
 @Http.Controller(path)
-export class VentureCategoriesController {
-  private readonly VENTURE_CATEGORIES_HOST: string;
+export class EventCategoriesController {
+  private readonly EVENT_CATEGORIES_HOST: string;
 
   public constructor(
     private readonly proxyService: ProxyService,
     private readonly configService: ConfigService,
   ) {
-    this.VENTURE_CATEGORIES_HOST = `${this.configService.getOrThrow<string>(
+    this.EVENT_CATEGORIES_HOST = `${this.configService.getOrThrow<string>(
       'VENTURES_MANAGEMENT_HOST',
     )}`;
   }
@@ -29,44 +29,32 @@ export class VentureCategoriesController {
   @Http.Get('')
   @Http.HttpCode(Http.HttpStatus.OK)
   @Http.UseInterceptors(AuthCookieInterceptor)
-  public async getVentureCategories(
+  public async getEventCategories(
     @Http.Req() request: Request,
     @GetUser() user: User,
   ) {
-    return this.proxyService.forward(
-      request,
-      this.VENTURE_CATEGORIES_HOST,
-      user,
-    );
+    return this.proxyService.forward(request, this.EVENT_CATEGORIES_HOST, user);
   }
 
   @Auth(AppRole.ADMIN)
   @Http.Post('')
   @Http.HttpCode(Http.HttpStatus.ACCEPTED)
   @Http.UseInterceptors(AuthCookieInterceptor)
-  public createVentureCategory(
+  public createEventCategory(
     @Http.Req() request: Request,
     @GetUser() user: User,
   ) {
-    return this.proxyService.forward(
-      request,
-      this.VENTURE_CATEGORIES_HOST,
-      user,
-    );
+    return this.proxyService.forward(request, this.EVENT_CATEGORIES_HOST, user);
   }
 
   @Auth(AppRole.ADMIN)
   @Http.Put('')
   @Http.HttpCode(Http.HttpStatus.ACCEPTED)
   @Http.UseInterceptors(AuthCookieInterceptor)
-  public updateVentureCategory(
+  public updateEventCategory(
     @Http.Req() request: Request,
     @GetUser() user: User,
   ) {
-    return this.proxyService.forward(
-      request,
-      this.VENTURE_CATEGORIES_HOST,
-      user,
-    );
+    return this.proxyService.forward(request, this.EVENT_CATEGORIES_HOST, user);
   }
 }

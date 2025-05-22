@@ -6,7 +6,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 
-import { AccessTokenPayload } from 'echadospalante-core';
+import { AccessTokenPayload } from 'echadospalante-domain';
 import * as jwt from 'jsonwebtoken';
 import * as jwksRsa from 'jwks-rsa';
 import { Observable, from } from 'rxjs';

@@ -7,43 +7,37 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
-import { map, Observable } from 'rxjs';
+import { lastValueFrom, Observable } from 'rxjs';
+import { AppRole, User } from 'echadospalante-domain';
 
 import { META_ROLES } from '../decorators/role-protected.decorator';
-import { AppRole } from '../interfaces/role';
-import { User } from '../interfaces/user';
 
 @Injectable()
 export class UserRoleGuard implements CanActivate {
-  public constructor(private readonly reflector: Reflector) {}
+  constructor(private readonly reflector: Reflector) {}
 
-  public canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
+  public async canActivate(context: ExecutionContext): Promise<boolean> {
     const validRoles: AppRole[] = this.reflector.get(
       META_ROLES,
       context.getHandler(),
     );
     if (!validRoles) return true;
+
     if (validRoles.length === 0) return true;
 
     const req = context.switchToHttp().getRequest();
-    const userObservable = req.user as Observable<User>;
+    // const user = req.user as User;
+    const user: User = await lastValueFrom(req.user);
+    if (!user) throw new BadRequestException('User not found');
 
-    if (!userObservable) throw new BadRequestException('User not found');
+    for (const role of user.roles) {
+      if (validRoles.includes(role.name)) {
+        return true;
+      }
+    }
 
-    return userObservable.pipe(
-      map((user) => {
-        for (const role of user.roles) {
-          if (validRoles.includes(role)) {
-            return true;
-          }
-        }
-
-        throw new ForbiddenException(
-          `User ${user.email} need a active role: [${validRoles}]`,
-        );
-      }),
+    throw new ForbiddenException(
+      `User ${user.email} need a active role: [${validRoles}]`,
     );
   }
 }

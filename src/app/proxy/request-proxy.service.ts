@@ -1,8 +1,10 @@
 import { HttpService } from '@nestjs/axios';
 import { HttpException, Injectable, Logger } from '@nestjs/common';
 
+import * as FormData from 'form-data';
 import { Request } from 'express';
 import { catchError, map } from 'rxjs';
+import { Readable } from 'stream';
 
 import { User } from '../interfaces/user';
 import { ResponseType } from './response-type';
@@ -25,8 +27,7 @@ export class ProxyService {
         url: `${targetHost}${req.path}`,
         data: req.body,
         headers: {
-          ...req.headers,
-          host: undefined,
+          // ...req.headers,
           'x-requested-by': authenticatedUser
             ? authenticatedUser.email
             : undefined,
@@ -44,24 +45,31 @@ export class ProxyService {
 
   public forwardFile(
     req: Request,
+    file: Express.Multer.File,
     targetHost: string,
     authenticatedUser?: User,
-    responseType: ResponseType = 'json',
   ) {
+    const formData = new FormData();
+    const stream = Readable.from(file.buffer);
+
+    formData.append('file', stream, {
+      filename: file.originalname,
+      contentType: file.mimetype,
+      knownLength: file.size,
+    });
+
     return this.httpService
       .request({
         method: req.method,
         url: `${targetHost}${req.path}`,
-        data: req.body,
+        data: formData,
         headers: {
-          ...req.headers,
-          host: undefined,
+          ...formData.getHeaders(),
           'x-requested-by': authenticatedUser
             ? authenticatedUser.id
             : undefined,
         },
         params: req.query,
-        responseType,
       })
       .pipe(
         map((response) => {

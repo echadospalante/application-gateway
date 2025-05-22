@@ -6,6 +6,8 @@ import { PassportModule } from '@nestjs/passport';
 
 import { environment, JoiValidationSchema } from '../env/env.setup';
 import { AuthController } from './controllers/auth/auth.controller';
+import { EventCategoriesController } from './controllers/event/event-categories.controller';
+import { EventsController } from './controllers/event/events.controller';
 import { UsersController } from './controllers/user/users.controller';
 import { VentureCategoriesController } from './controllers/venture/venture-categories.controller';
 import { VenturesController } from './controllers/venture/ventures.controller';
@@ -20,6 +22,8 @@ import { SecurityService } from './security/security.service';
     AuthController,
     UsersController,
     VentureCategoriesController,
+    EventCategoriesController,
+    EventsController,
     VenturesController,
   ],
   providers: [

@@ -1,7 +1,7 @@
 import { applyDecorators, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
-import { AppRole } from 'echadospalante-core';
+import { AppRole } from 'echadospalante-domain';
 
 import { UserRoleGuard } from '../guards/user-role.guard';
 import { RoleProtected } from './role-protected.decorator';

@@ -41,11 +41,10 @@ export class SecurityService extends PassportStrategy(Strategy) {
   }
 
   public validate(payload: AccessTokenPayload): Observable<User> {
-    const { id } = payload;
-
+    const { email } = payload;
     return this.httpService
       .get<User>(
-        `${this.configService.getOrThrow('USERS_MANAGEMENT_HOST')}/api/v1/users/id/${id}`,
+        `${this.configService.getOrThrow('USERS_MANAGEMENT_HOST')}/api/v1/users/email/${email}`,
       )
       .pipe(
         map((response) => {

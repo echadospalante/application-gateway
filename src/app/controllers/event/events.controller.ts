@@ -1,20 +1,20 @@
 import * as Http from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { FileInterceptor } from '@nestjs/platform-express';
 
-import { Request } from 'express';
 import { AppRole } from 'echadospalante-domain';
+import { Request } from 'express';
 
 import { GetUser } from '../../decorators';
 import { Auth } from '../../decorators/auth.decorator';
 import { AuthCookieInterceptor } from '../../interceptors/auth-cookie.interceptor';
 import { User } from '../../interfaces/user';
 import { ProxyService } from '../../proxy/request-proxy.service';
-import { FileInterceptor } from '@nestjs/platform-express';
 
 const path = '/ventures';
 
 @Http.Controller(path)
-export class VenturesController {
+export class EventsController {
   private readonly VENTURES_MANAGEMENT_HOST: string;
 
   public constructor(
@@ -27,7 +27,7 @@ export class VenturesController {
   }
 
   @Auth(AppRole.ADMIN, AppRole.USER)
-  @Http.Post('/cover-photo')
+  @Http.Post('/_/events/cover-photo')
   @Http.UseInterceptors(FileInterceptor('file'))
   @Http.HttpCode(Http.HttpStatus.CREATED)
   @Http.UseInterceptors(AuthCookieInterceptor)
@@ -45,10 +45,10 @@ export class VenturesController {
   }
 
   @Auth(AppRole.ADMIN, AppRole.USER)
-  @Http.Post('')
+  @Http.Post('/:ventureId/events')
   @Http.HttpCode(Http.HttpStatus.CREATED)
   @Http.UseInterceptors(AuthCookieInterceptor)
-  public createVenture(@Http.Req() request: Request, @GetUser() user: User) {
+  public createEvent(@Http.Req() request: Request, @GetUser() user: User) {
     return this.proxyService.forward(
       request,
       this.VENTURES_MANAGEMENT_HOST,
@@ -57,10 +57,25 @@ export class VenturesController {
   }
 
   @Auth()
-  @Http.Get('')
+  @Http.Get('/_/events')
   @Http.HttpCode(Http.HttpStatus.OK)
   @Http.UseInterceptors(AuthCookieInterceptor)
-  public async getVentures(
+  public async getEventsOfAllVentures(
+    @Http.Req() request: Request,
+    @GetUser() user: User,
+  ) {
+    return this.proxyService.forward(
+      request,
+      this.VENTURES_MANAGEMENT_HOST,
+      user,
+    );
+  }
+
+  @Auth()
+  @Http.Get('/:ventureId/events')
+  @Http.HttpCode(Http.HttpStatus.OK)
+  @Http.UseInterceptors(AuthCookieInterceptor)
+  public async getEventsOfVenture(
     @Http.Req() request: Request,
     @GetUser() user: User,
   ) {
@@ -75,7 +90,7 @@ export class VenturesController {
   @Http.Put('')
   @Http.HttpCode(Http.HttpStatus.ACCEPTED)
   @Http.UseInterceptors(AuthCookieInterceptor)
-  public updateVenture(@Http.Req() request: Request, @GetUser() user: User) {
+  public updateEvent(@Http.Req() request: Request, @GetUser() user: User) {
     return this.proxyService.forward(
       request,
       this.VENTURES_MANAGEMENT_HOST,

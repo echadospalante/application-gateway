@@ -1,7 +1,7 @@
 import * as Http from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-import { AppRole } from 'echadospalante-core';
+import { AppRole } from 'echadospalante-domain';
 import { Request } from 'express';
 
 import { GetUser } from '../../decorators';
@@ -25,16 +25,16 @@ export class UsersController {
     )}`;
   }
 
-  @Auth(AppRole.ADMIN)
   @Http.Get('')
-  @Http.HttpCode(Http.HttpStatus.ACCEPTED)
+  @Auth(AppRole.ADMIN)
+  @Http.HttpCode(Http.HttpStatus.OK)
   @Http.UseInterceptors(AuthCookieInterceptor)
   public getUsers(@Http.Req() request: Request, @GetUser() user: User) {
     return this.proxyService.forward(request, this.USERS_MANAGEMENT_HOST, user);
   }
 
-  @Auth(AppRole.ADMIN)
   @Http.Get('/:id')
+  @Auth(AppRole.ADMIN)
   @Http.HttpCode(Http.HttpStatus.ACCEPTED)
   @Http.UseInterceptors(AuthCookieInterceptor)
   public getUserById(@Http.Req() request: Request, @GetUser() user: User) {
