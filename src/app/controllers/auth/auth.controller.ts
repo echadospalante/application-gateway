@@ -70,6 +70,14 @@ export class AuthController {
   }
 
   @Auth()
+  @Http.Get('/roles')
+  @Http.HttpCode(Http.HttpStatus.OK)
+  @Http.UseInterceptors(AuthCookieInterceptor)
+  public getAllRoles(@Http.Req() request: Request, @GetUser() user: User) {
+    return this.proxyService.forward(request, this.USERS_MANAGEMENT_HOST, user);
+  }
+
+  @Auth()
   @Http.Post('/onboarding')
   @Http.HttpCode(Http.HttpStatus.CREATED)
   @Http.UseInterceptors(AuthCookieInterceptor)

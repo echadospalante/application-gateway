@@ -48,7 +48,10 @@ export class PublicationsController {
   @Http.Post('/:ventureId/publications')
   @Http.HttpCode(Http.HttpStatus.CREATED)
   @Http.UseInterceptors(AuthCookieInterceptor)
-  public createPublication(@Http.Req() request: Request, @GetUser() user: User) {
+  public createPublication(
+    @Http.Req() request: Request,
+    @GetUser() user: User,
+  ) {
     return this.proxyService.forward(
       request,
       this.VENTURES_MANAGEMENT_HOST,
@@ -90,7 +93,10 @@ export class PublicationsController {
   @Http.Put('')
   @Http.HttpCode(Http.HttpStatus.ACCEPTED)
   @Http.UseInterceptors(AuthCookieInterceptor)
-  public updatePublication(@Http.Req() request: Request, @GetUser() user: User) {
+  public updatePublication(
+    @Http.Req() request: Request,
+    @GetUser() user: User,
+  ) {
     return this.proxyService.forward(
       request,
       this.VENTURES_MANAGEMENT_HOST,

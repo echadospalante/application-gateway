@@ -19,7 +19,7 @@ COPY --from=builder /app/dist /app/dist
 COPY --from=builder /app/package.json /app
 COPY --from=builder /app/package-lock.json /app
 
-EXPOSE 3000
+EXPOSE 5000
 
 WORKDIR /app
 

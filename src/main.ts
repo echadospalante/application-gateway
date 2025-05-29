@@ -8,6 +8,7 @@ import * as morgan from 'morgan';
 
 import { AppModule } from './app/app.module';
 import { json, urlencoded } from 'express';
+import { ConfigService } from '@nestjs/config';
 
 const main = async () => {
   const logger = new Logger('main', { timestamp: true });
@@ -47,8 +48,11 @@ const main = async () => {
 
   app.use(cookieParser());
 
-  await app.listen(3000).then(() => {
-    logger.log(`Server up and running on port ${3000}`);
+  const configService = app.get(ConfigService);
+  const port = configService.get('PORT');
+
+  await app.listen(port).then(() => {
+    logger.log(`Server up and running on port ${port}`);
   });
 };
 
