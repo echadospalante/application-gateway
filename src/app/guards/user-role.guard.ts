@@ -7,8 +7,8 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
-import { lastValueFrom, Observable } from 'rxjs';
 import { AppRole, User } from 'echadospalante-domain';
+import { lastValueFrom } from 'rxjs';
 
 import { META_ROLES } from '../decorators/role-protected.decorator';
 

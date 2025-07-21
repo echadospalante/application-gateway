@@ -26,6 +26,21 @@ export class PublicationCategoriesController {
   }
 
   @Auth()
+  @Http.Get('/count-stats')
+  @Http.HttpCode(Http.HttpStatus.OK)
+  @Http.UseInterceptors(AuthCookieInterceptor)
+  public async getPublicationCategoriesStats(
+    @Http.Req() request: Request,
+    @GetUser() user: User,
+  ) {
+    return this.proxyService.forward(
+      request,
+      this.PUBLICATION_CATEGORIES_HOST,
+      user,
+    );
+  }
+
+  @Auth()
   @Http.Get('')
   @Http.HttpCode(Http.HttpStatus.OK)
   @Http.UseInterceptors(AuthCookieInterceptor)

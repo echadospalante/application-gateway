@@ -1,7 +1,6 @@
 import * as Http from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-import { AppRole } from 'echadospalante-domain';
 import { Request } from 'express';
 
 import { GetUser } from '../../decorators';
@@ -10,62 +9,59 @@ import { AuthCookieInterceptor } from '../../interceptors/auth-cookie.intercepto
 import { User } from '../../interfaces/user';
 import { ProxyService } from '../../proxy/request-proxy.service';
 
-const path = '/events/categories';
+const path = '/events';
 
 @Http.Controller(path)
-export class EventCategoriesController {
-  private readonly EVENT_CATEGORIES_HOST: string;
+export class EventDonationsController {
+  private readonly EVENT_DONATIONS_HOST: string;
 
   public constructor(
     private readonly proxyService: ProxyService,
     private readonly configService: ConfigService,
   ) {
-    this.EVENT_CATEGORIES_HOST = `${this.configService.getOrThrow<string>(
+    this.EVENT_DONATIONS_HOST = `${this.configService.getOrThrow<string>(
       'VENTURES_MANAGEMENT_HOST',
     )}`;
   }
 
   @Auth()
-  @Http.Get('/count-stats')
+  @Http.Get('/_/donations/sent')
   @Http.HttpCode(Http.HttpStatus.OK)
   @Http.UseInterceptors(AuthCookieInterceptor)
-  public async getEventCategoriesStats(
+  public async getSentEventDonations(
     @Http.Req() request: Request,
     @GetUser() user: User,
   ) {
-    return this.proxyService.forward(request, this.EVENT_CATEGORIES_HOST, user);
+    return this.proxyService.forward(request, this.EVENT_DONATIONS_HOST, user);
   }
 
   @Auth()
-  @Http.Get('')
+  @Http.Get('/_/donations/received')
   @Http.HttpCode(Http.HttpStatus.OK)
   @Http.UseInterceptors(AuthCookieInterceptor)
-  public async getEventCategories(
+  public async getReceivedEventDonations(
     @Http.Req() request: Request,
     @GetUser() user: User,
   ) {
-    return this.proxyService.forward(request, this.EVENT_CATEGORIES_HOST, user);
+    return this.proxyService.forward(request, this.EVENT_DONATIONS_HOST, user);
   }
 
-  @Auth(AppRole.ADMIN)
-  @Http.Post('')
-  @Http.HttpCode(Http.HttpStatus.ACCEPTED)
+  @Auth()
+  @Http.Post('/:eventId/donations')
+  @Http.HttpCode(Http.HttpStatus.CREATED)
   @Http.UseInterceptors(AuthCookieInterceptor)
-  public createEventCategory(
+  public createEventDonation(
     @Http.Req() request: Request,
     @GetUser() user: User,
   ) {
-    return this.proxyService.forward(request, this.EVENT_CATEGORIES_HOST, user);
+    return this.proxyService.forward(request, this.EVENT_DONATIONS_HOST, user);
   }
 
-  @Auth(AppRole.ADMIN)
-  @Http.Put('')
-  @Http.HttpCode(Http.HttpStatus.ACCEPTED)
+  @Auth()
+  @Http.Get('/:eventId/donations')
+  @Http.HttpCode(Http.HttpStatus.OK)
   @Http.UseInterceptors(AuthCookieInterceptor)
-  public updateEventCategory(
-    @Http.Req() request: Request,
-    @GetUser() user: User,
-  ) {
-    return this.proxyService.forward(request, this.EVENT_CATEGORIES_HOST, user);
+  public getEventDonation(@Http.Req() request: Request, @GetUser() user: User) {
+    return this.proxyService.forward(request, this.EVENT_DONATIONS_HOST, user);
   }
 }

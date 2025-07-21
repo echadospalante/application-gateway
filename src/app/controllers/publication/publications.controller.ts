@@ -75,6 +75,21 @@ export class PublicationsController {
   }
 
   @Auth()
+  @Http.Get('/_/publications/highlighted')
+  @Http.HttpCode(Http.HttpStatus.OK)
+  @Http.UseInterceptors(AuthCookieInterceptor)
+  public async getHighlightedPublications(
+    @Http.Req() request: Request,
+    @GetUser() user: User,
+  ) {
+    return this.proxyService.forward(
+      request,
+      this.VENTURES_MANAGEMENT_HOST,
+      user,
+    );
+  }
+
+  @Auth()
   @Http.Get('/_/publications/:publicationId')
   @Http.HttpCode(Http.HttpStatus.OK)
   @Http.UseInterceptors(AuthCookieInterceptor)

@@ -71,6 +71,81 @@ export class VenturesController {
     );
   }
 
+  @Auth()
+  @Http.Get('/owned')
+  @Http.HttpCode(Http.HttpStatus.OK)
+  @Http.UseInterceptors(AuthCookieInterceptor)
+  public async getOwnedVentures(
+    @Http.Req() request: Request,
+    @GetUser() user: User,
+  ) {
+    return this.proxyService.forward(
+      request,
+      this.VENTURES_MANAGEMENT_HOST,
+      user,
+    );
+  }
+
+  @Auth()
+  @Http.Get('/map')
+  @Http.HttpCode(Http.HttpStatus.OK)
+  @Http.UseInterceptors(AuthCookieInterceptor)
+  public async getVenturesForMap(
+    @Http.Req() request: Request,
+    @GetUser() user: User,
+  ) {
+    return this.proxyService.forward(
+      request,
+      this.VENTURES_MANAGEMENT_HOST,
+      user,
+    );
+  }
+
+  @Auth()
+  @Http.Get('/:ventureId/stats')
+  @Http.HttpCode(Http.HttpStatus.OK)
+  @Http.UseInterceptors(AuthCookieInterceptor)
+  public async getVentureStats(
+    @Http.Req() request: Request,
+    @GetUser() user: User,
+  ) {
+    return this.proxyService.forward(
+      request,
+      this.VENTURES_MANAGEMENT_HOST,
+      user,
+    );
+  }
+
+  @Auth()
+  @Http.Get('/:ventureId')
+  @Http.HttpCode(Http.HttpStatus.OK)
+  @Http.UseInterceptors(AuthCookieInterceptor)
+  public async getVentureDetail(
+    @Http.Req() request: Request,
+    @GetUser() user: User,
+  ) {
+    return this.proxyService.forward(
+      request,
+      this.VENTURES_MANAGEMENT_HOST,
+      user,
+    );
+  }
+
+  @Auth()
+  @Http.Get('/slug/:ventureSlug')
+  @Http.HttpCode(Http.HttpStatus.OK)
+  @Http.UseInterceptors(AuthCookieInterceptor)
+  public async getVentureDetailBySlug(
+    @Http.Req() request: Request,
+    @GetUser() user: User,
+  ) {
+    return this.proxyService.forward(
+      request,
+      this.VENTURES_MANAGEMENT_HOST,
+      user,
+    );
+  }
+
   @Auth(AppRole.ADMIN)
   @Http.Put('')
   @Http.HttpCode(Http.HttpStatus.ACCEPTED)

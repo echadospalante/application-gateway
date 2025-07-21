@@ -6,12 +6,16 @@ import { PassportModule } from '@nestjs/passport';
 
 import { environment, JoiValidationSchema } from '../env/env.setup';
 import { AuthController } from './controllers/auth/auth.controller';
+import { EventDonationsController } from './controllers/donation/event-donations.controller';
 import { EventCategoriesController } from './controllers/event/event-categories.controller';
 import { EventsController } from './controllers/event/events.controller';
 import { PublicationCategoriesController } from './controllers/publication/publication-categories.controller';
+import { PublicationClapsController } from './controllers/publication/publication-claps.controller';
+import { PublicationCommentsController } from './controllers/publication/publication-comments.controller';
 import { PublicationsController } from './controllers/publication/publications.controller';
 import { UsersController } from './controllers/user/users.controller';
 import { VentureCategoriesController } from './controllers/venture/venture-categories.controller';
+import { VentureSubscriptionsController } from './controllers/venture/venture-subscriptions.controller';
 import { VenturesController } from './controllers/venture/ventures.controller';
 import { HealthService } from './health/health.service';
 import { AuthCookieInterceptor } from './interceptors/auth-cookie.interceptor';
@@ -26,7 +30,11 @@ import { SecurityService } from './security/security.service';
     VentureCategoriesController,
     EventCategoriesController,
     EventsController,
+    PublicationCommentsController,
+    EventDonationsController,
+    PublicationClapsController,
     VenturesController,
+    VentureSubscriptionsController,
     PublicationsController,
     PublicationCategoriesController,
   ],

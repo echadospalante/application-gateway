@@ -25,6 +25,17 @@ export class UsersController {
     )}`;
   }
 
+  @Http.Get('/usage/statistics')
+  @Auth()
+  @Http.HttpCode(Http.HttpStatus.OK)
+  @Http.UseInterceptors(AuthCookieInterceptor)
+  public getUserOwnedUsageStatistics(
+    @Http.Req() request: Request,
+    @GetUser() user: User,
+  ) {
+    return this.proxyService.forward(request, this.USERS_MANAGEMENT_HOST, user);
+  }
+
   @Http.Get('')
   @Auth(AppRole.ADMIN)
   @Http.HttpCode(Http.HttpStatus.OK)

@@ -1,20 +1,18 @@
 import * as Http from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { FileInterceptor } from '@nestjs/platform-express';
 
-import { AppRole } from 'echadospalante-domain';
 import { Request } from 'express';
 
 import { GetUser } from '../../decorators';
 import { Auth } from '../../decorators/auth.decorator';
-import { AuthCookieInterceptor } from '../../interceptors/auth-cookie.interceptor';
 import { User } from '../../interfaces/user';
-import { ProxyService } from '../../proxy/request-proxy.service';
+import { ProxyService } from './../../proxy/request-proxy.service';
+import { AuthCookieInterceptor } from './../../interceptors/auth-cookie.interceptor';
 
 const path = '/ventures';
 
 @Http.Controller(path)
-export class EventsController {
+export class VentureSubscriptionsController {
   private readonly VENTURES_MANAGEMENT_HOST: string;
 
   public constructor(
@@ -26,56 +24,56 @@ export class EventsController {
     )}`;
   }
 
-  @Auth(AppRole.ADMIN, AppRole.USER)
-  @Http.Post('/_/events/cover-photo')
-  @Http.UseInterceptors(FileInterceptor('file'))
+  @Auth()
+  @Http.Get('/:ventureId/subscription-status')
+  @Http.HttpCode(Http.HttpStatus.OK)
+  @Http.UseInterceptors(AuthCookieInterceptor)
+  public async getVentureSubscriptionStatus(
+    @Http.Req() request: Request,
+    @GetUser() user: User,
+  ) {
+    return this.proxyService.forward(
+      request,
+      this.VENTURES_MANAGEMENT_HOST,
+      user,
+    );
+  }
+
+  @Auth()
+  @Http.Get('/owned/subscriptions/stats')
+  @Http.HttpCode(Http.HttpStatus.OK)
+  @Http.UseInterceptors(AuthCookieInterceptor)
+  public async getOwnedSubscriptionsStats(
+    @Http.Req() request: Request,
+    @GetUser() user: User,
+  ) {
+    return this.proxyService.forward(
+      request,
+      this.VENTURES_MANAGEMENT_HOST,
+      user,
+    );
+  }
+
+  @Auth()
+  @Http.Get('/owned/subscriptions/:ventureCategoryId')
+  @Http.HttpCode(Http.HttpStatus.OK)
+  @Http.UseInterceptors(AuthCookieInterceptor)
+  public async getOwnedSubscriptionsByCategoryId(
+    @Http.Req() request: Request,
+    @GetUser() user: User,
+  ) {
+    return this.proxyService.forward(
+      request,
+      this.VENTURES_MANAGEMENT_HOST,
+      user,
+    );
+  }
+
+  @Auth()
+  @Http.Post('/:ventureId/subscriptions')
   @Http.HttpCode(Http.HttpStatus.CREATED)
   @Http.UseInterceptors(AuthCookieInterceptor)
-  public createCoverPhoto(
-    @Http.Req() request: Request,
-    @GetUser() user: User,
-    @Http.UploadedFile() file: Express.Multer.File,
-  ) {
-    return this.proxyService.forwardFile(
-      request,
-      file,
-      this.VENTURES_MANAGEMENT_HOST,
-      user,
-    );
-  }
-
-  @Auth()
-  @Http.Get('/_/events/highlighted')
-  @Http.HttpCode(Http.HttpStatus.OK)
-  @Http.UseInterceptors(AuthCookieInterceptor)
-  public async getHighlightedEvents(
-    @Http.Req() request: Request,
-    @GetUser() user: User,
-  ) {
-    return this.proxyService.forward(
-      request,
-      this.VENTURES_MANAGEMENT_HOST,
-      user,
-    );
-  }
-
-  @Auth(AppRole.ADMIN, AppRole.USER)
-  @Http.Post('/:ventureId/events')
-  @Http.HttpCode(Http.HttpStatus.CREATED)
-  @Http.UseInterceptors(AuthCookieInterceptor)
-  public createEvent(@Http.Req() request: Request, @GetUser() user: User) {
-    return this.proxyService.forward(
-      request,
-      this.VENTURES_MANAGEMENT_HOST,
-      user,
-    );
-  }
-
-  @Auth()
-  @Http.Get('/_/events')
-  @Http.HttpCode(Http.HttpStatus.OK)
-  @Http.UseInterceptors(AuthCookieInterceptor)
-  public async getEventsOfAllVentures(
+  public async createSubscription(
     @Http.Req() request: Request,
     @GetUser() user: User,
   ) {
@@ -87,10 +85,10 @@ export class EventsController {
   }
 
   @Auth()
-  @Http.Get('/:ventureId/events')
-  @Http.HttpCode(Http.HttpStatus.OK)
+  @Http.Delete('/:ventureId/subscriptions')
+  @Http.HttpCode(Http.HttpStatus.NO_CONTENT)
   @Http.UseInterceptors(AuthCookieInterceptor)
-  public async getEventsOfVenture(
+  public deleteSubscription(
     @Http.Req() request: Request,
     @GetUser() user: User,
   ) {
@@ -101,11 +99,14 @@ export class EventsController {
     );
   }
 
-  @Auth(AppRole.ADMIN)
-  @Http.Put('')
-  @Http.HttpCode(Http.HttpStatus.ACCEPTED)
+  @Auth()
+  @Http.Get('/:ventureId/subscriptions')
+  @Http.HttpCode(Http.HttpStatus.OK)
   @Http.UseInterceptors(AuthCookieInterceptor)
-  public updateEvent(@Http.Req() request: Request, @GetUser() user: User) {
+  public async getVentureSubscriptions(
+    @Http.Req() request: Request,
+    @GetUser() user: User,
+  ) {
     return this.proxyService.forward(
       request,
       this.VENTURES_MANAGEMENT_HOST,

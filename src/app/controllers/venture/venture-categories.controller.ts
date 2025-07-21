@@ -26,10 +26,25 @@ export class VentureCategoriesController {
   }
 
   @Auth()
-  @Http.Get('')
+  @Http.Get('/all')
   @Http.HttpCode(Http.HttpStatus.OK)
   @Http.UseInterceptors(AuthCookieInterceptor)
   public async getVentureCategories(
+    @Http.Req() request: Request,
+    @GetUser() user: User,
+  ) {
+    return this.proxyService.forward(
+      request,
+      this.VENTURE_CATEGORIES_HOST,
+      user,
+    );
+  }
+
+  @Auth()
+  @Http.Get('/count-stats')
+  @Http.HttpCode(Http.HttpStatus.OK)
+  @Http.UseInterceptors(AuthCookieInterceptor)
+  public async getVentureCategoriesStats(
     @Http.Req() request: Request,
     @GetUser() user: User,
   ) {
