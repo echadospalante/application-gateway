@@ -25,6 +25,21 @@ export class VentureSponsorshipsController {
   }
 
   @Auth()
+  @Http.Get('/:ventureId/sponsorships/status')
+  @Http.HttpCode(Http.HttpStatus.OK)
+  @Http.UseInterceptors(AuthCookieInterceptor)
+  public async getSponsorshipStatus(
+    @Http.Req() request: Request,
+    @GetUser() user: User,
+  ) {
+    return this.proxyService.forward(
+      request,
+      this.VENTURE_SPONSORSHIPS_HOST,
+      user,
+    );
+  }
+
+  @Auth()
   @Http.Get('/_/sponsorships/sent')
   @Http.HttpCode(Http.HttpStatus.OK)
   @Http.UseInterceptors(AuthCookieInterceptor)
