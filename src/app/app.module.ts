@@ -13,6 +13,7 @@ import { PublicationCategoriesController } from './controllers/publication/publi
 import { PublicationClapsController } from './controllers/publication/publication-claps.controller';
 import { PublicationCommentsController } from './controllers/publication/publication-comments.controller';
 import { PublicationsController } from './controllers/publication/publications.controller';
+import { VentureSponsorshipsController } from './controllers/sponsorship/venture-sponsorships.controller';
 import { UsersController } from './controllers/user/users.controller';
 import { VentureCategoriesController } from './controllers/venture/venture-categories.controller';
 import { VentureSubscriptionsController } from './controllers/venture/venture-subscriptions.controller';
@@ -32,6 +33,7 @@ import { SecurityService } from './security/security.service';
     EventsController,
     PublicationCommentsController,
     EventDonationsController,
+    VentureSponsorshipsController,
     PublicationClapsController,
     VenturesController,
     VentureSubscriptionsController,
